@@ -11,9 +11,9 @@ func UserRoutes(incomingRoutes *gin.Engine){
 	
 	incomingRoutes.GET("/users", controller.GetUsers())
 
-	incomingRoutes.GET("/users/:user_id", controller.GetUser())
-	incomingRoutes.PUT("/users/:user_id", controller.EditUser())
+	incomingRoutes.GET("/user/:user_id", controller.GetUser())
+	incomingRoutes.PUT("/user/:user_id", controller.EditUser())
 
-	incomingRoutes.DELETE("/users/deactive", controller.DeactivateUser())
+	incomingRoutes.DELETE("/user/deactive", controller.DeactivateUser())
 
 }

@@ -1,0 +1,1156 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CROWD",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:9000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "noauthAuth": {
+        "type": "http",
+        "scheme": "noauth"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User Manager"
+    },
+    {
+      "name": "Task Manager"
+    },
+    {
+      "name": "Stream Manager"
+    },
+    {
+      "name": "Notification Manager"
+    }
+  ],
+  "paths": {
+    "/user/signup": {
+      "post": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "first_name": "sara",
+                  "last_name": "safaee",
+                  "user_role": "WORKER",
+                  "phone": "0992246",
+                  "email": "sarasafaeeW@gmail.com",
+                  "password": "123456",
+                  "location": "IRAN"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "ADMIN@gmail.com",
+                  "password": "ADMINADMIN"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "GetUsers",
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IkFETUlOQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJBZG1pbiIsIkxhc3RfbmFtZSI6IkFkbWluIiwiVWlkIjoiNjM1NTNjMjEzY2ZlY2Q1NmQ1Y2Q0YWRkIiwiVXNlcl9yb2xlIjoiQURNSU4iLCJleHAiOjE2Njg4ODk3MDJ9.HBDd5EJDDwWfoonbhfSZoP06yQ9Xj1k326NIxXUd3JY"
+          },
+          {
+            "name": "recordPerPage",
+            "in": "header",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "logout",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFzYWZhZWVXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM3N2VhNjI2ZDQ3Y2YwNjdhOWU4ZWQ3IiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4ODg5NzE2fQ.UKJeavt56fY5LpQexzT45oaU61oJapOFS9vqVhKuj00"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/deactive": {
+      "delete": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "DeleteUser",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXMUBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoic2FyYSIsIkxhc3RfbmFtZSI6InNhZmFlZSIsIlVpZCI6IjYzNTY1YzNlNjQxYmY4MDU5NmU5ODQ4NyIsIlVzZXJfcm9sZSI6IlJFUVVFU1RFUiIsImV4cCI6MTY2NjY5MDQ5OX0.7ukzf9pKe__hUIvvG95jb2XdfPFIsAYyabHe54o4bvY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/63566ce0310e288624e63b28": {
+      "put": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "EditUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "saraWWmail.com",
+                  "User_role": "WORKEfddd"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IkFETUlOQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJBZG1pbiIsIkxhc3RfbmFtZSI6IkFkbWluIiwiVWlkIjoiNjM1NTNjMjEzY2ZlY2Q1NmQ1Y2Q0YWRkIiwiVXNlcl9yb2xlIjoiQURNSU4iLCJleHAiOjE2Njg4OTAxOTN9.Ul7Br-ZtWQJY2HdOezi6wAGMQiyF3_kv8LyNpK0lyRo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "User Manager"
+        ],
+        "summary": "GetUser",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFzYWZhZWVXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM3N2VhNjI2ZDQ3Y2YwNjdhOWU4ZWQ3IiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4ODg5NzE2fQ.UKJeavt56fY5LpQexzT45oaU61oJapOFS9vqVhKuj00"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task": {
+      "post": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "CtreateTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "title": "school0",
+                  "max_workers": 10,
+                  "approve_on_demand": true,
+                  "stream_id": "6374cadd28fcffdd26a1617f",
+                  "deadline": "2023-10-25T08:55:00.000+00:00"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4Njg0ODU2fQ.5yFyfMShLWWHCmRd9NyfAxC46LIte7Ar4vmRep9ZtX0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/tasks/customized": {
+      "get": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "GetCustomizedTasks",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZWM1MzYxMTNmMjBhOWEyOGFlIiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4Nzk0NzMwfQ.g6AgXDHd2Dw8w2OxKRnmkboO3wBjFnoExr4spNS3MQw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/6357c0f051d46b81948c71df": {
+      "put": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "EditTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSMTU4QGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1N2Y5NmVmNDkyNmQyZDg2ZDU5MmIzIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY2OTQ2MDE4fQ.VVE-NlZpYwp7L7ZSnxTy3y3Gq67IpjugUPFr-5jQt_k"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/filter": {
+      "post": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "CreateFilterTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "task_id": "636e0b4b58647128f1d1b61c",
+                  "tags": [
+                    "GERMANY",
+                    "ITALY",
+                    "INDI"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjM2MTM3fQ.he8mJHlAZYX2LQ1S0Z5F4yv3xTvPoXw0vawEE-W7FI0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/filter/635a4aa4fd47b436bb5df2ef": {
+      "get": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "GetFilterTaskByID",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IkFETUlOQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJBZG1pbiIsIkxhc3RfbmFtZSI6IkFkbWluIiwiVWlkIjoiNjM1NTNjMjEzY2ZlY2Q1NmQ1Y2Q0YWRkIiwiVXNlcl9yb2xlIjoiQURNSU4iLCJleHAiOjE2NjgwOTkwMDl9.TKGAtL2z4qxJQFpYQ1xQEqkZevLi5r6h4PNfkFRf808"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/filtertask/635a4aa4fd47b436bb5df2ef": {
+      "get": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "GetFilterTaskByTaskID",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/filter/dsgokjmsdg": {
+      "put": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "EditFilterTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "tags": [
+                    "IRAN",
+                    "ITALY",
+                    "INDIA"
+                  ],
+                  "task_id": "12345"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2Njg2OTc3NzZ9.eN4VII5gcV8eb71wuJb_Vn3cuckNq79Lincmb8I9rQQ"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/6357f991f4926d2d86d592b4": {
+      "delete": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "DeleteTask",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjQwMTg4fQ.RMjbdAz0ZUg2trGAWAchmANUYQ7OuHY3S3S34K-TFWk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/filter/636df3a119f1020d7b43e5f4": {
+      "delete": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "DeleteFilterTask",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjM2NTE5fQ.XgBMFV8BsblT8m3v-OML1GlIXwrMgpZOcVX-7MReVXs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/application/6374cb0f28fcffdd26a16180": {
+      "post": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "ApplyTask",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZWM1MzYxMTNmMjBhOWEyOGFlIiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4Nzk0NzMwfQ.g6AgXDHd2Dw8w2OxKRnmkboO3wBjFnoExr4spNS3MQw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/evaluation/6374cb3f28fcffdd26a16181": {
+      "put": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "EvaluateWorkerTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "last_status": "DOING"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4Nzk0ODEyfQ.EZNwEwowDKtQBv3zJvv2TPBcgW2ejwe65WjnSlGd-Gs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/task/workertasks/WAITING": {
+      "put": {
+        "tags": [
+          "Task Manager"
+        ],
+        "summary": "GetWorkerTasks",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4Nzk0ODEyfQ.EZNwEwowDKtQBv3zJvv2TPBcgW2ejwe65WjnSlGd-Gs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream": {
+      "post": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "CtreateStream",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "title": "school",
+                  "token": ";k;54654864,knlknsm"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4Njg0ODU2fQ.5yFyfMShLWWHCmRd9NyfAxC46LIte7Ar4vmRep9ZtX0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/streams": {
+      "get": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "GetStreams",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjY4NDIyfQ.CEw-8oW75l2U9niGX_MopbmQDEeGqvVt_WOMe230Y-c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream/635be6402c641dae109f3e14": {
+      "put": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "EditStream",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "title": "855"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY3MDU0MzE1fQ.k9uf0LWGyfBu9gqY8cucp-PNaY5dz33x0WdbdiLWw4A"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/action": {
+      "post": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "CtreateAction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "walking22"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MDg3MzYyfQ.kGi-PnmyAM3OTsQOvWsWYnliTvDU0dyInZ6S6QJHfeg"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "EditAction",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/action/636bb38594447bae3250a984": {
+      "put": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "EditAction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "running"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/action/636baff61dcbf32489e0f29f": {
+      "get": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "GetAction",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSMUBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoic2FyYSIsIkxhc3RfbmFtZSI6InNhZmFlZSIsIlVpZCI6IjYzNTY0MWNlYWY2YTIxZjQyNTU5OTI5MiIsIlVzZXJfcm9sZSI6IlJFUVVFU1RFUiIsImV4cCI6MTY2ODA4ODIzNH0.KSGU-2xPh6ozWV04Vc6P-h_uiJGarPP_5MKIwaJ0ZRw"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/actions": {
+      "get": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "GetActions",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjY4NDIyfQ.CEw-8oW75l2U9niGX_MopbmQDEeGqvVt_WOMe230Y-c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/action/636bb5ddf5d747285e342aa9": {
+      "delete": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "DeleteAction",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MDg3MzYyfQ.kGi-PnmyAM3OTsQOvWsWYnliTvDU0dyInZ6S6QJHfeg"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream/636e0c1358647128f1d1b620": {
+      "delete": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "DeleteStream",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjQwMTg4fQ.RMjbdAz0ZUg2trGAWAchmANUYQ7OuHY3S3S34K-TFWk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream/filter": {
+      "post": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "CreateFilterStream",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "stream_id": "636df27f19f1020d7b43e5f1",
+                  "action_id": "636bad298b1e5149986e9ad9",
+                  "severity": 463
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4NTkzMDg2fQ.WuhENlGFYmQ77QUaxnysQVeAe0eUQX9-UfSQVNl62qk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream/filter/636e70597dcc0029cea67b7b": {
+      "get": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "GetFilterStreamByID",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4MjY4NDIyfQ.CEw-8oW75l2U9niGX_MopbmQDEeGqvVt_WOMe230Y-c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "EditFilterStream",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "severity": 2,
+                  "action_id": "akfjlaofjs"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4NTkzMDg2fQ.WuhENlGFYmQ77QUaxnysQVeAe0eUQX9-UfSQVNl62qk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream/filters/636df27f19f1020d7b43e5f1": {
+      "get": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "GetFilterStreamsByStreamID",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4NTkzMDg2fQ.WuhENlGFYmQ77QUaxnysQVeAe0eUQX9-UfSQVNl62qk"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/stream/filter/63736466fffe2de5b8462fe2": {
+      "delete": {
+        "tags": [
+          "Stream Manager"
+        ],
+        "summary": "DeleteFilterStream",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSMUBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoic2FyYSIsIkxhc3RfbmFtZSI6InNhZmFlZSIsIlVpZCI6IjYzNTY0MWNlYWY2YTIxZjQyNTU5OTI5MiIsIlVzZXJfcm9sZSI6IlJFUVVFU1RFUiIsImV4cCI6MTY2ODU5NzIyMX0.4WNzBWgbfEfQiIAewF35Qz_9RFckU86FwyBhyB36-S0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/notification": {
+      "post": {
+        "tags": [
+          "Notification Manager"
+        ],
+        "summary": "SendNotification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "message": "a dog ate a sandwich ",
+                  "worker_task_id": "6374cb3f28fcffdd26a16181",
+                  "notification_type": "REPORT"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4ODYyMjM2fQ.15Mf6nmAZB177kstU7-5by_VWdxCsQ_brv96EhlKqic"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/notifications/6374cb3f28fcffdd26a16181/SENT": {
+      "get": {
+        "tags": [
+          "Notification Manager"
+        ],
+        "summary": "GetNotifications",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZWM1MzYxMTNmMjBhOWEyOGFlIiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4ODYyMTgwfQ.CS6jlFXQ1BvmBVYf1xdE8NlITE0HYafzUhjPUDXj_9o"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}
