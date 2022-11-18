@@ -779,15 +779,16 @@ func GetWorkerTasks()gin.HandlerFunc{
 					},
 				}
 			}else{
-				matchStage2 = bson.D{
-					{"$match",bson.D{
-						{"$or",
-							bson.A{
-								bson.D{{"alltasks.requester_id", uid}},	
-							}},
-					},
-					},
-				}
+				matchStage2 = bson.D{{"$match",bson.M{"alltasks.requester_id": uid}}}
+				// matchStage2 = bson.D{
+				// 	{"$match",bson.D{
+				// 		{"$or",
+				// 			bson.A{
+				// 				bson.D{{"alltasks.requester_id", uid}},	
+				// 			}},
+				// 	},
+				// 	},
+				// }
 			}
 
 			
