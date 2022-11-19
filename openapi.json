@@ -60,7 +60,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "637882b15e1d5175a1c03831"
+                  }
+                }
+              }
             }
           }
         }
@@ -89,7 +96,26 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "637882b15e1d5175a1c03831",
+                    "first_name": "sara",
+                    "last_name": "safaee",
+                    "Password": "$2a$14$9hlggNcijuEDrGOrWEKjb.bXccTEoEwCk6v2wm3xF7yLA/IXQwTx6",
+                    "email": "sarasafaeeW@gmail.com",
+                    "phone": "0992246",
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFzYWZhZWVXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM3ODgyYjE1ZTFkNTE3NWExYzAzODMxIiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4OTI4NjQ3fQ.cLvEiA7MQDUThs3-20xkrtCcACsZBkaCK2PfAfmN4dY",
+                    "User_role": "WORKER",
+                    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2Njk0NDcwNDd9.C_D7hStTphls_cSknfpZd2zApVndMLEMGsA6d7tNsgI",
+                    "created_at": "2022-11-19T07:16:01Z",
+                    "updated_at": "2022-11-19T07:17:27Z",
+                    "user_id": "637882b15e1d5175a1c03831",
+                    "location": "IRAN"
+                  }
+                }
+              }
             }
           }
         }
@@ -101,11 +127,6 @@
           "User Manager"
         ],
         "summary": "GetUsers",
-        "security": [
-          {
-            "noauthAuth": []
-          }
-        ],
         "parameters": [
           {
             "name": "token",
@@ -128,7 +149,149 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "total_count": 15,
+                    "user_items": [
+                      {
+                        "_id": "63553c0e3cfecd56d5cd4adc",
+                        "created_at": "2022-10-23T16:35:18+03:30",
+                        "email": "ADMIN2@gmail.com",
+                        "first_name": "Admin",
+                        "last_name": "Admin",
+                        "password": "$2a$14$oNODn5KpR4i0Vdqqxh2IeuKmgfBz1XWAu7AumPh88IBfEFPDRaUhC",
+                        "phone": "000000000000000002",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjcxMzUxMTh9.gZeLPJ5434sjBX42G7gQyFijcafpAsAcGdOFBPgGSSw",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IkFETUlOMkBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoiQWRtaW4iLCJMYXN0X25hbWUiOiJBZG1pbiIsIlVpZCI6IjYzNTUzYzBlM2NmZWNkNTZkNWNkNGFkYyIsIlVzZXJfcm9sZSI6IkFETUlOIiwiZXhwIjoxNjY2NjE2NzE4fQ.Yvf7J8FWOkP-ExfF64M1dQ-l5PEsIMUTgO_AYPHicM0",
+                        "updated_at": "2022-10-23T16:35:18+03:30",
+                        "user_id": "63553c0e3cfecd56d5cd4adc",
+                        "user_role": "ADMIN"
+                      },
+                      {
+                        "_id": "63553c213cfecd56d5cd4add",
+                        "created_at": "2022-10-23T16:35:37+03:30",
+                        "email": "ADMIN@gmail.com",
+                        "first_name": "Admin",
+                        "last_name": "Admin",
+                        "password": "$2a$14$LBb4zaLKK5.LPFZGjEdguO4Fbg9i1wGIfx1VKVcAQqTQmQGIND6ty",
+                        "phone": "000000000000000001",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2Njk0MDg1OTN9.fNoQjJVtaKUOGVxTcZaczEW7yWpkiYfCr0zQ6xeatLQ",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IkFETUlOQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJBZG1pbiIsIkxhc3RfbmFtZSI6IkFkbWluIiwiVWlkIjoiNjM1NTNjMjEzY2ZlY2Q1NmQ1Y2Q0YWRkIiwiVXNlcl9yb2xlIjoiQURNSU4iLCJleHAiOjE2Njg4OTAxOTN9.Ul7Br-ZtWQJY2HdOezi6wAGMQiyF3_kv8LyNpK0lyRo",
+                        "updated_at": "2022-11-19T00:06:33+03:30",
+                        "user_id": "63553c213cfecd56d5cd4add",
+                        "user_role": "ADMIN"
+                      },
+                      {
+                        "_id": "63553cec536113f20a9a28ae",
+                        "created_at": "2022-10-23T16:39:00+03:30",
+                        "email": "saraW@gmail.com",
+                        "first_name": "sara",
+                        "last_name": "safaee",
+                        "password": "$2a$14$UjuR49gwPKcpSkaETJlw6OcHp9Eow0gIR.eB4PBC.Cpg.BWIVjg.W",
+                        "phone": "123",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjkzODA1ODB9.1S0QE0GxQEW8o9OvwLB8tAx9ceNiFXxdE7sBizOPVNk",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZWM1MzYxMTNmMjBhOWEyOGFlIiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4ODYyMTgwfQ.CS6jlFXQ1BvmBVYf1xdE8NlITE0HYafzUhjPUDXj_9o",
+                        "updated_at": "2022-11-18T16:19:40+03:30",
+                        "user_id": "63553cec536113f20a9a28ae",
+                        "user_role": "WORKER"
+                      },
+                      {
+                        "_id": "63553cff536113f20a9a28af",
+                        "created_at": "2022-10-23T16:39:19+03:30",
+                        "email": "saraR@gmail.com",
+                        "first_name": "sara",
+                        "last_name": "safaee",
+                        "password": "$2a$14$PRzNY4O82btgSojuI/SqRuOyHuBjJ7u7QbbGMSaNYIF5XlGwTQtJ6",
+                        "phone": "124",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2Njk0MDgwNjJ9.xGUJ_eLkqbBeQYvIbU7HHAugqfYirhijctUnc-cxsBY",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM1NTNjZmY1MzYxMTNmMjBhOWEyOGFmIiwiVXNlcl9yb2xlIjoiUkVRVUVTVEVSIiwiZXhwIjoxNjY4ODg5NjYyfQ.RiGRs--RiyEKmAJOxLDqh1CKVEsVIRd9qzqbdzu8CYw",
+                        "updated_at": "2022-11-18T23:57:42+03:30",
+                        "user_id": "63553cff536113f20a9a28af",
+                        "user_role": "REQUESTER"
+                      },
+                      {
+                        "_id": "63554c376fb451f6c49eed73",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIifQ.dB2eEzCiljFmRZcDChMy0An6QGYI4sebEt1AjXwTSEg",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIifQ.dB2eEzCiljFmRZcDChMy0An6QGYI4sebEt1AjXwTSEg",
+                        "updated_at": "2022-10-23T17:50:41+03:30",
+                        "user_id": ""
+                      },
+                      {
+                        "_id": "635641ceaf6a21f425599292",
+                        "created_at": "2022-10-24T11:12:06+03:30",
+                        "email": "saraR1@gmail.com",
+                        "first_name": "sara",
+                        "last_name": "safaee",
+                        "password": "$2a$14$MhfzAFXIeD8BXS23lzzFOeBBEZGORAjz8FlMoEC8eN/D6jYzyH.56",
+                        "phone": "1245",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjkxMTU2MjF9.UZNFASOyYMolaXvJhtWyK6Q3mANQRZLcSdvZg-2vuGM",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSMUBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoic2FyYSIsIkxhc3RfbmFtZSI6InNhZmFlZSIsIlVpZCI6IjYzNTY0MWNlYWY2YTIxZjQyNTU5OTI5MiIsIlVzZXJfcm9sZSI6IlJFUVVFU1RFUiIsImV4cCI6MTY2ODU5NzIyMX0.4WNzBWgbfEfQiIAewF35Qz_9RFckU86FwyBhyB36-S0",
+                        "updated_at": "2022-11-15T14:43:41+03:30",
+                        "user_id": "635641ceaf6a21f425599292",
+                        "user_role": "REQUESTER"
+                      },
+                      {
+                        "_id": "63566ce0310e288624e63b28",
+                        "created_at": "2022-10-24T14:15:52+03:30",
+                        "email": "saraWW@gmail.com",
+                        "first_name": "sfwef",
+                        "last_name": "safaee",
+                        "password": "$2a$14$xuBXDjcaaTLMO27bL6TJJO/iVIxcLkRVukzM.oJJ0Jp5gzlgnQzkW",
+                        "phone": "124567",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjcyMTkyMjh9.Zv-i6PANpxW0Tl039O2JHpoCaYyOZM-0RSmzZiswNDI",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXMUBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoieml6aTIiLCJMYXN0X25hbWUiOiJzYWZhZWUiLCJVaWQiOiI2MzU2NmNlMDMxMGUyODg2MjRlNjNiMjgiLCJVc2VyX3JvbGUiOiJXT1JLRVIiLCJleHAiOjE2NjY3MDA4Mjh9.D1LeuRFY6NBcdz-jgTfC7CSK9bKJizeViH6XzaOV3jE",
+                        "updated_at": "2022-10-24T15:57:08+03:30",
+                        "user_id": "63566ce0310e288624e63b28",
+                        "user_role": "WORKER"
+                      },
+                      {
+                        "_id": "635677fc92febd255fa68dba",
+                        "created_at": "2022-10-24T15:03:16+03:30",
+                        "email": "saraW2@gmail.com",
+                        "first_name": "sara",
+                        "last_name": "safaee",
+                        "password": "$2a$14$QIabY643EPV49EShVxGq..7B4b5M.MTQneP0ALwUVRqbo.4cuDnbK",
+                        "phone": "1245678",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjcyMjM0OTh9.rtbzBrGYvXkWmsfgbU1Mb3tAY5mb1_QZks6sXOqsPWs",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFXMkBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoic2FyYSIsIkxhc3RfbmFtZSI6InNhZmFlZSIsIlVpZCI6IjYzNTY3N2ZjOTJmZWJkMjU1ZmE2OGRiYSIsIlVzZXJfcm9sZSI6IldPUktFUiIsImV4cCI6MTY2NjcwNTA5OH0.78CTl8n9sh1RMj6apzUklHQzgNrof0XsxMxEjnnRtkE",
+                        "updated_at": "2022-10-24T17:08:18+03:30",
+                        "user_id": "635677fc92febd255fa68dba",
+                        "user_role": "WORKER"
+                      },
+                      {
+                        "_id": "63579d59b3cab9abd9cf782a",
+                        "created_at": "2022-10-25T11:54:57+03:30",
+                        "email": "saraRR@gmail.com",
+                        "first_name": "sara",
+                        "last_name": "safaee",
+                        "password": "$2a$14$X9nLOfzYfsOILBzCcVdCgegTZChX3Ax4FfggnB0ZwQvUnIiVKd68G",
+                        "phone": "12456789",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjcyOTExMTh9.u2Lm3uf3Dzm5mL9F2NyN5Qvc0T12l_kJygIwn9FsVg4",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSUkBnbWFpbC5jb20iLCJGaXJzdF9uYW1lIjoic2FyYSIsIkxhc3RfbmFtZSI6InNhZmFlZSIsIlVpZCI6IjYzNTc5ZDU5YjNjYWI5YWJkOWNmNzgyYSIsIlVzZXJfcm9sZSI6IlJFUVVFU1RFUiIsImV4cCI6MTY2Njc3MjcxOH0.dhnA9UEGUH1oY4HlSQjziQEBPqX9xlAZ_MUJ-c_mXUo",
+                        "updated_at": "2022-10-25T11:55:18+03:30",
+                        "user_id": "63579d59b3cab9abd9cf782a",
+                        "user_role": "REQUESTER"
+                      },
+                      {
+                        "_id": "6357cc2aed0d871705269bfb",
+                        "created_at": "2022-10-25T15:14:42+03:30",
+                        "email": "saraRR1@gmail.com",
+                        "first_name": "sara",
+                        "last_name": "safaee",
+                        "password": "$2a$14$rtBzPsVYNN1EZjzCFjixaON277y3zrggXG3ZtJyfQhz.qRe3luX9u",
+                        "phone": "1245111",
+                        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2NjczMDMwODh9.yNRfEiPo-aUzqVHNAAhFezjH5lo5tAKIXR6gmVR6iGw",
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFSUjFAZ21haWwuY29tIiwiRmlyc3RfbmFtZSI6InNhcmEiLCJMYXN0X25hbWUiOiJzYWZhZWUiLCJVaWQiOiI2MzU3Y2MyYWVkMGQ4NzE3MDUyNjliZmIiLCJVc2VyX3JvbGUiOiJSRVFVRVNURVIiLCJleHAiOjE2NjY3ODQ2ODh9.qGVcU5n7DzN1cHKSfdJtHzc3W78yVR84TduUczgk0SY",
+                        "updated_at": "2022-10-25T15:14:48+03:30",
+                        "user_id": "6357cc2aed0d871705269bfb",
+                        "user_role": "REQUESTER"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -154,10 +317,17 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful response",
+          "500": {
+            "description": null,
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "you already logedOut"
+                  }
+                }
+              }
             }
           }
         }
@@ -183,7 +353,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "DeletedCount": 1
+                  }
+                }
+              }
             }
           }
         }
@@ -222,7 +399,26 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "637885085e1d5175a1c03834",
+                    "first_name": "sara",
+                    "last_name": "safaee",
+                    "Password": "$2a$14$etYJ88qQuc00qMJO13AC0uFIKPLtfxfC0sWTCRQ/p6SpvdQXRkM5m",
+                    "email": "sarasafaeeWW@gmail.com",
+                    "phone": "0992246",
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFzYWZhZWVXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM3ODg1MDg1ZTFkNTE3NWExYzAzODM0IiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4OTI5MTY1fQ.m4jCsf4pAC4gBfg4dGC9W5IOFiz250BHLE7r8hakMyc",
+                    "User_role": "WORKER",
+                    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2Njk0NDc1NjV9.Yom_R4kQtNnhi3tz-bS5GZNPzuNV-EdFPfnGiyLpqqc",
+                    "created_at": "2022-11-19T07:26:00Z",
+                    "updated_at": "2022-11-19T10:57:20+03:30",
+                    "user_id": "637885085e1d5175a1c03834",
+                    "location": "IRAN"
+                  }
+                }
+              }
             }
           }
         }
@@ -246,7 +442,26 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "637885085e1d5175a1c03834",
+                    "first_name": "sara",
+                    "last_name": "safaee",
+                    "Password": "$2a$14$etYJ88qQuc00qMJO13AC0uFIKPLtfxfC0sWTCRQ/p6SpvdQXRkM5m",
+                    "email": "sarasafaeeWW@gmail.com",
+                    "phone": "0992246",
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6InNhcmFzYWZhZWVXQGdtYWlsLmNvbSIsIkZpcnN0X25hbWUiOiJzYXJhIiwiTGFzdF9uYW1lIjoic2FmYWVlIiwiVWlkIjoiNjM3ODg1MDg1ZTFkNTE3NWExYzAzODM0IiwiVXNlcl9yb2xlIjoiV09SS0VSIiwiZXhwIjoxNjY4OTI5MTY1fQ.m4jCsf4pAC4gBfg4dGC9W5IOFiz250BHLE7r8hakMyc",
+                    "User_role": "WORKER",
+                    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsIkZpcnN0X25hbWUiOiIiLCJMYXN0X25hbWUiOiIiLCJVaWQiOiIiLCJVc2VyX3JvbGUiOiIiLCJleHAiOjE2Njk0NDc1NjV9.Yom_R4kQtNnhi3tz-bS5GZNPzuNV-EdFPfnGiyLpqqc",
+                    "created_at": "2022-11-19T07:26:00Z",
+                    "updated_at": "2022-11-19T07:27:20Z",
+                    "user_id": "637885085e1d5175a1c03834",
+                    "location": "IRAN"
+                  }
+                }
+              }
             }
           }
         }
@@ -288,7 +503,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "637886bf5e1d5175a1c03836"
+                  }
+                }
+              }
             }
           }
         }
@@ -314,7 +536,31 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "total_count": 1,
+                    "user_items": [
+                      {
+                        "_id": "6357a46433a2308757b0c9f9",
+                        "approve_on_demand": false,
+                        "created_at": "2022-10-25T12:25:00+03:30",
+                        "deadline": "0001-01-01T03:30:00+03:30",
+                        "description": null,
+                        "filter": [],
+                        "max_workers": "5",
+                        "requester_id": "1456988",
+                        "stream_id": "123456321",
+                        "task_id": "6357a46433a2308757b0c9f9",
+                        "title": "garden",
+                        "updated_at": "2022-10-25T12:25:00+03:30",
+                        "wage": null
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -331,7 +577,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {}
+                "example": {
+                  "max_workers": 64
+                }
               }
             }
           }
@@ -350,7 +598,25 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "637886bf5e1d5175a1c03836",
+                    "max_workers": 64,
+                    "title": "school0",
+                    "Description": null,
+                    "approve_on_demand": true,
+                    "deadline": "2023-10-25T08:55:00Z",
+                    "Wage": null,
+                    "stream_id": "637886ad5e1d5175a1c03835",
+                    "requester_id": "63553cff536113f20a9a28af",
+                    "created_at": "2022-11-19T07:33:19Z",
+                    "updated_at": "2022-11-19T11:08:02+03:30",
+                    "task_id": "637886bf5e1d5175a1c03836"
+                  }
+                }
+              }
             }
           }
         }
@@ -393,7 +659,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "637888275e1d5175a1c03837"
+                  }
+                }
+              }
             }
           }
         }
@@ -417,9 +690,25 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": null,
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "637888275e1d5175a1c03837",
+                    "tags": [
+                      "GERMANY",
+                      "ITALY",
+                      "INDI"
+                    ],
+                    "created_at": "2022-11-19T07:39:19Z",
+                    "updated_at": "2022-11-19T07:39:19Z",
+                    "task_id": "637886bf5e1d5175a1c03836",
+                    "filter_task_id": "637888275e1d5175a1c03837"
+                  }
+                }
+              }
             }
           }
         }
@@ -441,7 +730,7 @@
         }
       }
     },
-    "/task/filter/dsgokjmsdg": {
+    "/task/filter/637888275e1d5175a1c03837": {
       "put": {
         "tags": [
           "Task Manager"
@@ -478,7 +767,23 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "637888275e1d5175a1c03837",
+                    "tags": [
+                      "IRAN",
+                      "ITALY",
+                      "INDIA"
+                    ],
+                    "created_at": "2022-11-19T07:39:19Z",
+                    "updated_at": "2022-11-19T11:21:48+03:30",
+                    "task_id": "637886bf5e1d5175a1c03836",
+                    "filter_task_id": "637888275e1d5175a1c03837"
+                  }
+                }
+              }
             }
           }
         }
@@ -501,10 +806,17 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful response",
+          "500": {
+            "description": null,
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": " no documents in result"
+                  }
+                }
+              }
             }
           }
         }
@@ -530,7 +842,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": " no documents in result"
+                  }
+                }
+              }
             }
           }
         }
@@ -559,7 +878,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "63788cdd5e1d5175a1c03838"
+                  }
+                }
+              }
             }
           }
         }
@@ -597,14 +923,22 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "updated_at": "2022-11-19T11:33:11+03:30",
+                    "last_status": "DOING"
+                  }
+                }
+              }
             }
           }
         }
       }
     },
-    "/task/workertasks/WAITING": {
-      "put": {
+    "/task/workertasks/DOING": {
+      "get": {
         "tags": [
           "Task Manager"
         ],
@@ -626,7 +960,41 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "total_count": 1,
+                    "user_items": [
+                      {
+                        "_id": "63767830a4ece5e441472975",
+                        "alltasks": [
+                          {
+                            "_id": "6374cb0f28fcffdd26a16180",
+                            "approve_on_demand": true,
+                            "created_at": "2022-11-16T15:05:43+03:30",
+                            "deadline": "2023-10-25T12:25:00+03:30",
+                            "description": null,
+                            "max_workers": 10,
+                            "requester_id": "63553cff536113f20a9a28af",
+                            "stream_id": "6374cadd28fcffdd26a1617f",
+                            "task_id": "6374cb0f28fcffdd26a16180",
+                            "title": "school0",
+                            "updated_at": "2022-11-16T15:05:43+03:30",
+                            "wage": null
+                          }
+                        ],
+                        "created_at": "2022-11-17T21:36:40+03:30",
+                        "last_status": "DOING",
+                        "task_id": "6374cb0f28fcffdd26a16180",
+                        "updated_at": "0001-01-01T03:30:00+03:30",
+                        "worker_id": "63553cec536113f20a9a28ae",
+                        "worker_task_id": "63767830a4ece5e441472975"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }

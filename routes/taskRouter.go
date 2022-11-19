@@ -26,8 +26,8 @@ func TaskRoutes(incomingRoutes *gin.Engine){
 
 	incomingRoutes.POST("/task/application/:task_id", controller.ApplyTask())
 	incomingRoutes.PUT("/task/evaluation/:worker_task_id", controller.EvaluateWorkerTask())
-	incomingRoutes.PUT("/task/workertasks/:last_status", controller.GetWorkerTasks())
-	incomingRoutes.PUT("/task/workertasks", controller.GetWorkerTasks())
+	incomingRoutes.GET("/task/workertasks/:last_status", controller.GetWorkerTasks())
+	incomingRoutes.GET("/task/workertasks", controller.GetWorkerTasks())
 
 
 
