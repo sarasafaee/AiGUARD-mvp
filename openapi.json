@@ -942,10 +942,7 @@
         "tags": [
           "Task Manager"
         ],
-        "summary": "GetWorkerTasks",
-        "requestBody": {
-          "content": {}
-        },
+        "summary": "GetWorkerTask",
         "parameters": [
           {
             "name": "token",
@@ -1033,7 +1030,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "637886ad5e1d5175a1c03835"
+                  }
+                }
+              }
             }
           }
         }
@@ -1059,7 +1063,26 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "total_count": 1,
+                    "user_items": [
+                      {
+                        "_id": "635be6402c641dae109f3e14",
+                        "available_at": "0001-01-01T03:30:00+03:30",
+                        "created_at": "2022-10-28T17:55:04+03:30",
+                        "requester_id": "63553cff536113f20a9a28af",
+                        "stream_id": "635be6402c641dae109f3e14",
+                        "title": "855",
+                        "token": null,
+                        "updated_at": "2022-10-28T18:10:00+03:30"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -1097,7 +1120,21 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "635be6402c641dae109f3e14",
+                    "title": "855",
+                    "requester_id": "63553cff536113f20a9a28af",
+                    "created_at": "2022-10-28T14:25:04Z",
+                    "updated_at": "2022-11-19T14:37:26+03:30",
+                    "token  validate:": null,
+                    "available_at": "0001-01-01T00:00:00Z",
+                    "stream_id": "635be6402c641dae109f3e14"
+                  }
+                }
+              }
             }
           }
         }
@@ -1135,33 +1172,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Stream Manager"
-        ],
-        "summary": "EditAction",
-        "requestBody": {
-          "content": {}
-        },
-        "parameters": [
-          {
-            "name": "token",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "6378b9c43c58045dbfe1f18f"
+                  }
+                }
+              }
             }
           }
         }
@@ -1189,7 +1207,19 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "636bb38594447bae3250a984",
+                    "name": "running",
+                    "requester_id": "63553cff536113f20a9a28af",
+                    "created_at": "2022-11-09T14:04:53Z",
+                    "updated_at": "2022-11-19T14:42:41+03:30",
+                    "action_id": "636bb38594447bae3250a984"
+                  }
+                }
+              }
             }
           }
         }
@@ -1215,7 +1245,19 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "636baff61dcbf32489e0f29f",
+                    "name": "speaking",
+                    "requester_id": "63553cff536113f20a9a28af",
+                    "created_at": "2022-11-09T13:49:42Z",
+                    "updated_at": "2022-11-09T13:49:42Z",
+                    "action_id": "636baff61dcbf32489e0f29f"
+                  }
+                }
+              }
             }
           }
         }
@@ -1241,7 +1283,56 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "total_count": 5,
+                    "user_items": [
+                      {
+                        "_id": "636bad298b1e5149986e9ad9",
+                        "action_id": "636bad298b1e5149986e9ad9",
+                        "created_at": "2022-11-09T17:07:45+03:30",
+                        "name": "moving",
+                        "requester_id": "63553cff536113f20a9a28af",
+                        "updated_at": "2022-11-09T17:07:45+03:30"
+                      },
+                      {
+                        "_id": "636baff61dcbf32489e0f29f",
+                        "action_id": "636baff61dcbf32489e0f29f",
+                        "created_at": "2022-11-09T17:19:42+03:30",
+                        "name": "speaking",
+                        "requester_id": "63553cff536113f20a9a28af",
+                        "updated_at": "2022-11-09T17:19:42+03:30"
+                      },
+                      {
+                        "_id": "636bb38594447bae3250a984",
+                        "action_id": "636bb38594447bae3250a984",
+                        "created_at": "2022-11-09T17:34:53+03:30",
+                        "name": "running",
+                        "requester_id": "63553cff536113f20a9a28af",
+                        "updated_at": "2022-11-19T14:42:41+03:30"
+                      },
+                      {
+                        "_id": "636bb5bbf5d747285e342aa8",
+                        "action_id": "636bb5bbf5d747285e342aa8",
+                        "created_at": "2022-11-09T17:44:19+03:30",
+                        "name": "walking22",
+                        "requester_id": "63553cff536113f20a9a28af",
+                        "updated_at": "2022-11-09T17:44:19+03:30"
+                      },
+                      {
+                        "_id": "6378b9c43c58045dbfe1f18f",
+                        "action_id": "6378b9c43c58045dbfe1f18f",
+                        "created_at": "2022-11-19T14:41:00+03:30",
+                        "name": "walking22",
+                        "requester_id": "63553cff536113f20a9a28af",
+                        "updated_at": "2022-11-19T14:41:00+03:30"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -1267,7 +1358,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "DeletedCount": 1
+                  }
+                }
+              }
             }
           }
         }
@@ -1293,7 +1391,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "stream deleted successfully"
+                  }
+                }
+              }
             }
           }
         }
@@ -1333,7 +1438,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "6378bd553c58045dbfe1f190"
+                  }
+                }
+              }
             }
           }
         }
@@ -1359,7 +1471,20 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "636e70597dcc0029cea67b7b",
+                    "severity": 2,
+                    "created_at": "2022-11-11T15:55:05Z",
+                    "updated_at": "2022-11-15T10:23:36Z",
+                    "stream_id": "636df27f19f1020d7b43e5f1",
+                    "filter_stream_id": "636e70597dcc0029cea67b7b",
+                    "action_id": "636bad298b1e5149986e9ad9"
+                  }
+                }
+              }
             }
           }
         }
@@ -1375,7 +1500,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "severity": 2,
+                  "severity": 10,
                   "action_id": "akfjlaofjs"
                 }
               }
@@ -1396,7 +1521,20 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "ID": "636e70597dcc0029cea67b7b",
+                    "severity": 10,
+                    "created_at": "2022-11-11T15:55:05Z",
+                    "updated_at": "2022-11-15T10:23:36Z",
+                    "stream_id": "636df27f19f1020d7b43e5f1",
+                    "filter_stream_id": "636e70597dcc0029cea67b7b",
+                    "action_id": "636bad298b1e5149986e9ad9"
+                  }
+                }
+              }
             }
           }
         }
@@ -1422,7 +1560,43 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "total_count": 3,
+                    "user_items": [
+                      {
+                        "_id": "636e70597dcc0029cea67b7b",
+                        "action_id": "636bad298b1e5149986e9ad9",
+                        "created_at": "2022-11-11T19:25:05+03:30",
+                        "filter_stream_id": "636e70597dcc0029cea67b7b",
+                        "severity": 2,
+                        "stream_id": "636df27f19f1020d7b43e5f1",
+                        "updated_at": "2022-11-15T13:53:36+03:30"
+                      },
+                      {
+                        "_id": "636ea6db7006bec578252540",
+                        "action_id": "636bad298b1e5149986e9ad9",
+                        "created_at": "2022-11-11T23:17:39+03:30",
+                        "filter_stream_id": "636ea6db7006bec578252540",
+                        "severity": 45,
+                        "stream_id": "636df27f19f1020d7b43e5f1",
+                        "updated_at": "2022-11-11T23:17:39+03:30"
+                      },
+                      {
+                        "_id": "6378bd553c58045dbfe1f190",
+                        "action_id": "636bad298b1e5149986e9ad9",
+                        "created_at": "2022-11-19T14:56:13+03:30",
+                        "filter_stream_id": "6378bd553c58045dbfe1f190",
+                        "severity": 463,
+                        "stream_id": "636df27f19f1020d7b43e5f1",
+                        "updated_at": "2022-11-19T14:56:13+03:30"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -1448,7 +1622,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "filter deleted successfully"
+                  }
+                }
+              }
             }
           }
         }
@@ -1488,7 +1669,14 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "InsertedID": "6378c0103c58045dbfe1f191"
+                  }
+                }
+              }
             }
           }
         }
@@ -1514,7 +1702,66 @@
           "200": {
             "description": "Successful response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "notif_items": [
+                      {
+                        "_id": "637679de95157ef3e4dd0f74",
+                        "created_at": "2022-11-17T21:43:50+03:30",
+                        "last_status": "SEEN",
+                        "message": "someone smiled",
+                        "notification_id": "637679de95157ef3e4dd0f74",
+                        "notification_type": "REPORT",
+                        "updated_at": "2022-11-17T21:43:50+03:30",
+                        "worker_task_id": "6374cb3f28fcffdd26a16181"
+                      },
+                      {
+                        "_id": "63777fcdd7485b86d02eebed",
+                        "created_at": "2022-11-18T16:21:25+03:30",
+                        "last_status": "SEEN",
+                        "message": "someone screamed",
+                        "notification_id": "63777fcdd7485b86d02eebed",
+                        "notification_type": "REPORT",
+                        "updated_at": "2022-11-18T16:21:25+03:30",
+                        "worker_task_id": "6374cb3f28fcffdd26a16181"
+                      },
+                      {
+                        "_id": "63778296d2bb2735ec8617f1",
+                        "created_at": "2022-11-18T16:33:18+03:30",
+                        "last_status": "SEEN",
+                        "message": "a mouse ran ",
+                        "notification_id": "63778296d2bb2735ec8617f1",
+                        "notification_type": "REPORT",
+                        "updated_at": "2022-11-18T16:33:18+03:30",
+                        "worker_task_id": "6374cb3f28fcffdd26a16181"
+                      },
+                      {
+                        "_id": "637782cbd2bb2735ec8617f2",
+                        "created_at": "2022-11-18T16:34:11+03:30",
+                        "last_status": "SEEN",
+                        "message": "a dog ate a sandwich ",
+                        "notification_id": "637782cbd2bb2735ec8617f2",
+                        "notification_type": "REPORT",
+                        "updated_at": "2022-11-18T16:34:11+03:30",
+                        "worker_task_id": "6374cb3f28fcffdd26a16181"
+                      },
+                      {
+                        "_id": "6378c0103c58045dbfe1f191",
+                        "created_at": "2022-11-19T15:07:52+03:30",
+                        "last_status": "SEEN",
+                        "message": "a dog ate a sandwich ",
+                        "notification_id": "6378c0103c58045dbfe1f191",
+                        "notification_type": "REPORT",
+                        "updated_at": "2022-11-19T15:07:52+03:30",
+                        "worker_task_id": "6374cb3f28fcffdd26a16181"
+                      }
+                    ],
+                    "total_count": 5
+                  }
+                }
+              }
             }
           }
         }

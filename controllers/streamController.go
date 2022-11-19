@@ -266,7 +266,7 @@ func DeleteStream()gin.HandlerFunc{
 			log.Panic(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting task"})
 		}
-		c.JSON(http.StatusOK,gin.H{"message":"task deleted successfully"} )
+		c.JSON(http.StatusOK,gin.H{"message":"stream deleted successfully"} )
 	}
 }
 
