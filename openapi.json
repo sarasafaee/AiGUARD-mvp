@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "CROWD",
+    "title": "CROWD SOURCING",
     "version": "1.0.0"
   },
   "servers": [
@@ -9,14 +9,6 @@
       "url": "http://127.0.0.1:9000"
     }
   ],
-  "components": {
-    "securitySchemes": {
-      "noauthAuth": {
-        "type": "http",
-        "scheme": "noauth"
-      }
-    }
-  },
   "tags": [
     {
       "name": "User Manager"
@@ -26,6 +18,9 @@
     },
     {
       "name": "Stream Manager"
+    },
+    {
+      "name": "Action Manager"
     },
     {
       "name": "Notification Manager"
@@ -318,7 +313,7 @@
         ],
         "responses": {
           "500": {
-            "description": null,
+            "description": "Error response",
             "content": {
               "application/json": {
                 "schema": {
@@ -690,7 +685,7 @@
         ],
         "responses": {
           "200": {
-            "description": null,
+            "description": "Error response",
             "content": {
               "application/json": {
                 "schema": {
@@ -807,7 +802,7 @@
         ],
         "responses": {
           "500": {
-            "description": null,
+            "description": "Error response",
             "content": {
               "application/json": {
                 "schema": {
@@ -1143,7 +1138,7 @@
     "/action": {
       "post": {
         "tags": [
-          "Stream Manager"
+          "Action Manager"
         ],
         "summary": "CtreateAction",
         "requestBody": {
@@ -1188,7 +1183,7 @@
     "/action/636bb38594447bae3250a984": {
       "put": {
         "tags": [
-          "Stream Manager"
+          "Action Manager"
         ],
         "summary": "EditAction",
         "requestBody": {
@@ -1228,7 +1223,7 @@
     "/action/636baff61dcbf32489e0f29f": {
       "get": {
         "tags": [
-          "Stream Manager"
+          "Action Manager"
         ],
         "summary": "GetAction",
         "parameters": [
@@ -1266,7 +1261,7 @@
     "/actions": {
       "get": {
         "tags": [
-          "Stream Manager"
+          "Action Manager"
         ],
         "summary": "GetActions",
         "parameters": [
@@ -1341,7 +1336,7 @@
     "/action/636bb5ddf5d747285e342aa9": {
       "delete": {
         "tags": [
-          "Stream Manager"
+          "Action Manager"
         ],
         "summary": "DeleteAction",
         "parameters": [
