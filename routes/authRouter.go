@@ -1,7 +1,7 @@
 package routes
 
 import(
-	controller "github.com/sarasafaee/sensifai-mvp-crowdsourcing/controllers"
+	controller "github.com/sarasafaee/AiGUARD-mvp/controllers"
 	"github.com/gin-gonic/gin"
 )
 

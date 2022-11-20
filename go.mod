@@ -1,4 +1,4 @@
-module github.com/sarasafaee/sensifai-mvp-crowdsourcing
+module github.com/sarasafaee/AiGUARD-mvp
 
 go 1.16
 

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "CROWD SOURCING",
+    "title": "AiGUARD",
     "version": "1.0.0"
   },
   "servers": [

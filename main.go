@@ -1,7 +1,7 @@
 package main
 
 import(
-	routes "github.com/sarasafaee/sensifai-mvp-crowdsourcing/routes"
+	routes "github.com/sarasafaee/AiGUARD-mvp/routes"
 	"os"
 	"log"
 	"github.com/gin-gonic/gin"

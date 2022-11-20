@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"time"
-	"github.com/sarasafaee/sensifai-mvp-crowdsourcing/database"
+	"github.com/sarasafaee/AiGUARD-mvp/database"
 	jwt "github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

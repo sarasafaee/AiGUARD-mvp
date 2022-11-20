@@ -1,8 +1,8 @@
 package routes
 
 import(
-	controller "github.com/sarasafaee/sensifai-mvp-crowdsourcing/controllers"
-	"github.com/sarasafaee/sensifai-mvp-crowdsourcing/middleware"
+	controller "github.com/sarasafaee/AiGUARD-mvp/controllers"
+	"github.com/sarasafaee/AiGUARD-mvp/middleware"
 	"github.com/gin-gonic/gin"
 )
 

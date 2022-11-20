@@ -3,7 +3,7 @@ package middleware
 import(
 	"fmt"
 	"net/http"
-	helper "github.com/sarasafaee/sensifai-mvp-crowdsourcing/helpers"
+	helper "github.com/sarasafaee/AiGUARD-mvp/helpers"
 	"github.com/gin-gonic/gin"
 )
 

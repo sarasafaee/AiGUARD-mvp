@@ -9,9 +9,9 @@ import(
 "time"
 "github.com/gin-gonic/gin"
 "github.com/go-playground/validator/v10"
-helper "github.com/sarasafaee/sensifai-mvp-crowdsourcing/helpers"
-"github.com/sarasafaee/sensifai-mvp-crowdsourcing/models"
-"github.com/sarasafaee/sensifai-mvp-crowdsourcing/database"
+helper "github.com/sarasafaee/AiGUARD-mvp/helpers"
+"github.com/sarasafaee/AiGUARD-mvp/models"
+"github.com/sarasafaee/AiGUARD-mvp/database"
 
 "go.mongodb.org/mongo-driver/bson"
 "go.mongodb.org/mongo-driver/bson/primitive"
