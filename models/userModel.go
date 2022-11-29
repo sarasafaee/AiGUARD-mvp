@@ -19,5 +19,5 @@ type User struct{
 	Updated_at		time.Time				`json:"updated_at"`
 	User_id			string					`json:"user_id"`
 	Location		*string					`json:"location" validate:"required,eq=IRAN|eq=IRAQ|eq=ENGLAND|eq=ITALY|eq=GERMANY|eq=NORWAY"`
-
+	State 			string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED`
 }

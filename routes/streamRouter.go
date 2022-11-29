@@ -17,11 +17,11 @@ func StreamRoutes(incomingRoutes *gin.Engine){
 	incomingRoutes.GET("/streams", controller.GetStreams())
 
 
-	incomingRoutes.POST("/stream/filter", controller.CreateFilterStream())
-	incomingRoutes.GET("/stream/filter/:filter_stream_id", controller.GetFilterStreamByID())
-	incomingRoutes.GET("/stream/filters/:stream_id", controller.GetFilterStreamsByStreamID())
-	incomingRoutes.PUT("/stream/filter/:filter_stream_id", controller.EditFilterStream())
-	incomingRoutes.DELETE("/stream/filter/:filter_stream_id", controller.DeleteFilterStream())
+	incomingRoutes.POST("/stream/activity", controller.CreateActivityStream())
+	incomingRoutes.GET("/stream/activity/:activity_stream_id", controller.GetActivityStreamByID())
+	incomingRoutes.GET("/stream/activities/:stream_id", controller.GetActivityStreamsByStreamID())
+	incomingRoutes.PUT("/stream/activity/:activity_stream_id", controller.EditActivityStream())
+	incomingRoutes.DELETE("/stream/activity/:activity_stream_id", controller.DeleteActivityStream())
 
 
 

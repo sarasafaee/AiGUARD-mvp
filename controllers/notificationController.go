@@ -48,8 +48,8 @@ func SendNotification()gin.HandlerFunc{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		if workerTask.Last_status == "WAITING"{
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "this task is not approved yet"})
+		if workerTask.Last_status != "RUNING"{
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "sending notification to this task is not available"})
 			return
 		}
 		var task models.Task

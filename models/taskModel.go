@@ -18,6 +18,8 @@ type Task struct{
 	Created_at			time.Time				`json:"created_at"`
 	Updated_at			time.Time				`json:"updated_at"`
 	Task_id				string					`json:"task_id"`
+	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
+
 }
 
 type FilterTask struct{
@@ -27,6 +29,8 @@ type FilterTask struct{
 	Updated_at			time.Time				`json:"updated_at"`
 	Task_id				string					`json:"task_id" validate:"required"`
 	Filter_task_id		string 					`json:"filter_task_id" `
+	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
+
 }
 
 type WorkerTask struct{
@@ -36,19 +40,25 @@ type WorkerTask struct{
 	Task_id				string					`json:"task_id" validate:"required"`
 	Worker_id			string 					`json:"filter_task_id"`
 	Worker_task_id		string					`json:"worker_task_id"`
-	Last_status			string					`json:"last_status" validate:"required,eq=PAID|eq=DONE|eq=DOING|eq=REJECTED|eq=WAITING|eq=SUSPENDED"`
+	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
+	Last_status			string					`json:"last_status" validate:"required,eq=APPROVED|eq=FINISHED|eq=RUNING|eq=REJECTED|eq=PENDING|eq=TERMINATED"`
 }
 
 //to use for evluation of workertask
 type WorkerTaskEval struct{
 	Updated_at			time.Time				`json:"updated_at"`
-	Last_status			string					`json:"last_status" validate:"required,eq=PAID|eq=DONE|eq=DOING|eq=REJECTED|eq=WAITING|eq=SUSPENDED"`
+	Last_status			string					`json:"last_status" validate:"required,eq=APPROVED|eq=FINISHED|eq=RUNING|eq=REJECTED|eq=PENDING|eq=TERMINATED"`
 }
-
+//to use for deletion of filtertask or task
+type DeletedTask struct{
+	Updated_at			time.Time				`json:"updated_at"`
+	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
+}
 type TaskStatus struct{
 	ID					primitive.ObjectID		`bson:"_id"`
 	Created_at			time.Time				`json:"created_at"`
 	Worker_task_id		string					`json:"worker_task_id"`
 	Status_id			string					`json:"status_id"`
-	Status				string					`json:"last_status" validate:"required,eq=PAID|eq=DONE|eq=DOING|eq=REJECTED|eq=WAITING|eq=SUSPENDED"`				
+	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
+	Status				string					`json:"last_status" validate:"required,eq=APPROVED|eq=FINISHED|eq=RUNING|eq=REJECTED|eq=PENDING|eq=TERMINATED"`				
 }

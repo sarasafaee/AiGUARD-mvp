@@ -20,7 +20,7 @@ helper "github.com/sarasafaee/AiGUARD-mvp/helpers"
 )
 
 var streamCollection *mongo.Collection = database.OpenCollection(database.Client, "stream")
-var filterStreamCollection *mongo.Collection = database.OpenCollection(database.Client, "filterStream")
+var activityStreamCollection *mongo.Collection = database.OpenCollection(database.Client, "activityStream")
 
 
 
@@ -43,12 +43,13 @@ func CtreateStream()gin.HandlerFunc{
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		stream.State = "ALIVE"
 		validationErr := validate2.Struct(stream)
 		if validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
 		} else {
 			//stream Existence in DB -----------------------
-			streamCount, err := streamCollection.CountDocuments(ctx, bson.M{"stream_id":stream.Stream_id})
+			streamCount, err := streamCollection.CountDocuments(ctx, bson.M{"stream_id":stream.Stream_id,"state":"ALIVE"})
 			defer cancel()
 			if err != nil {
 				log.Panic(err)
@@ -95,14 +96,24 @@ func GetStream()gin.HandlerFunc{
 		if UserRole == "WORKER" {
 			c.JSON(http.StatusBadRequest, gin.H{"error" : "Unauthorized to access this resource"})
 			return
+		}else if UserRole == "REQUESTER" {
+			//check stream existence
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":streamId,"state":"ALIVE"}).Decode(&stream)
+			defer cancel()
+			if err != nil{
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		}else if UserRole == "ADMIN"{
+			//check stream existence
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":streamId}).Decode(&stream)
+			defer cancel()
+			if err != nil{
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 		}
-		//check stream existence
-		err := streamCollection.FindOne(ctx, bson.M{"stream_id":streamId}).Decode(&stream)
-		defer cancel()
-		if err != nil{
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+
 		//check stream belonging to owner or is an admin
 		if stream.Requester_id == uid || UserRole == "ADMIN"{
 			c.JSON(http.StatusOK, stream)
@@ -126,7 +137,17 @@ func GetStreams()gin.HandlerFunc{
 			matchStage = bson.D{{"$match",bson.M{}}}
 
 		}else if UserRole == "REQUESTER" {
-			matchStage = bson.D{{"$match",bson.M{"requester_id":uid}}}
+			matchStage = bson.D{
+				{"$match",bson.D{
+					{"$and",
+						bson.A{
+							bson.D{{"state", "ALIVE"}},
+							bson.D{{"requester_id", uid}},
+						}},
+				},
+				},
+			}
+			// matchStage = bson.D{{"$match",bson.M{"requester_id":uid}}}
 		}else if UserRole == "WORKER" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
@@ -229,7 +250,7 @@ func EditStream()gin.HandlerFunc{
 	}
 }
 
-//delete a stream and all its dependencies(task,stream_filter) by requesterowner and admin 
+//delete a stream and all its dependencies(task,stream_activity) by requesterowner and admin 
 func DeleteStream()gin.HandlerFunc{
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
@@ -270,8 +291,8 @@ func DeleteStream()gin.HandlerFunc{
 	}
 }
 
-//create a filterStream by requester
-func CreateFilterStream()gin.HandlerFunc{
+//create a activityStream by requester
+func CreateActivityStream()gin.HandlerFunc{
 	return func(c *gin.Context){
 		uid := c.GetString("uid")
 		//check access---------------
@@ -281,13 +302,13 @@ func CreateFilterStream()gin.HandlerFunc{
 		}
 		//----------------------------
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		var filterStream models.FilterStream
+		var activityStream models.ActivityStream
 
-		if err := c.BindJSON(&filterStream); err != nil {
+		if err := c.BindJSON(&activityStream); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		validationErr := validate2.Struct(filterStream)
+		validationErr := validate2.Struct(activityStream)
 		if validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
 			return
@@ -295,7 +316,7 @@ func CreateFilterStream()gin.HandlerFunc{
 			//stream Existence in DB -----------------------
 
 			var stream models.Stream
-			err := streamCollection.FindOne(ctx, bson.M{"stream_id":filterStream.Stream_id}).Decode(&stream)
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":activityStream.Stream_id}).Decode(&stream)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": " stream not found"})
@@ -308,20 +329,20 @@ func CreateFilterStream()gin.HandlerFunc{
 			}
 			//action Existence in DB -----------------------
 			var action models.Action
-			err = actionCollection.FindOne(ctx, bson.M{"action_id":filterStream.Action_id}).Decode(&action)
+			err = actionCollection.FindOne(ctx, bson.M{"action_id":activityStream.Action_id}).Decode(&action)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": " action not found"})
 				return
 			}
-			filterStream.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-			filterStream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-			filterStream.ID = primitive.NewObjectID()
-			filterStream.Filter_stream_id = filterStream.ID.Hex()
-			//Insert filterStream into DB---------------------------------
-			resultInsertionNumber, insertErr := filterStreamCollection.InsertOne(ctx, filterStream)
+			activityStream.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			activityStream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			activityStream.ID = primitive.NewObjectID()
+			activityStream.Activity_stream_id = activityStream.ID.Hex()
+			//Insert activityStream into DB---------------------------------
+			resultInsertionNumber, insertErr := activityStreamCollection.InsertOne(ctx, activityStream)
 			if insertErr !=nil {
-				msg := fmt.Sprintf("filterTask item was not created")
+				msg := fmt.Sprintf("activityStream item was not created")
 				c.JSON(http.StatusInternalServerError, gin.H{"error":msg})
 				return
 			}
@@ -333,16 +354,16 @@ func CreateFilterStream()gin.HandlerFunc{
 	}
 }
 
-//get filterStream By filterStreamId
-func GetFilterStreamByID()gin.HandlerFunc{
+//get activityStream By activityStreamId
+func GetActivityStreamByID()gin.HandlerFunc{
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
 		uid := c.GetString("uid")
-		filterStreamId := c.Param("filter_stream_id")
-		var filterStream models.FilterStream
+		activityStreamId := c.Param("activity_stream_id")
+		var activityStream models.ActivityStream
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		//check filterStream existence
-		err := filterStreamCollection.FindOne(ctx, bson.M{"filter_stream_id":filterStreamId}).Decode(&filterStream)
+		//check activityStream existence
+		err := activityStreamCollection.FindOne(ctx, bson.M{"activity_stream_id":activityStreamId}).Decode(&activityStream)
 		defer cancel()
 		if err != nil{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -352,31 +373,31 @@ func GetFilterStreamByID()gin.HandlerFunc{
 			c.JSON(http.StatusBadRequest, gin.H{"error" : "Unauthorized to access this resource"})
 			return
 		}else if UserRole == "REQUESTER" {
-			//check filterStream and task belonging to owner
+			//check activityStream and task belonging to owner
 			var stream models.Stream
-			err := streamCollection.FindOne(ctx, bson.M{"stream_id":filterStream.Stream_id}).Decode(&stream)
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":activityStream.Stream_id}).Decode(&stream)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 			if stream.Requester_id == uid {
-				c.JSON(http.StatusOK, filterStream)
+				c.JSON(http.StatusOK, activityStream)
 				return
 			}else{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": " no documents in result"})
 				return
 			}
 		}else if UserRole == "ADMIN"{
-			c.JSON(http.StatusOK, filterStream)
+			c.JSON(http.StatusOK, activityStream)
 
 		}
 		
 	}
 }
 
-//get filterStreams By streamId
-func GetFilterStreamsByStreamID()gin.HandlerFunc{
+//get activityStreams By streamId
+func GetActivityStreamsByStreamID()gin.HandlerFunc{
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
 		uid := c.GetString("uid")
@@ -428,35 +449,35 @@ func GetFilterStreamsByStreamID()gin.HandlerFunc{
 				{"_id", 0},
 				{"total_count", 1},
 				{"user_items", bson.D{{"$slice", []interface{}{"$data", startIndex, recordPerPage}}}},}}}
-				result,err := filterStreamCollection.Aggregate(ctx, mongo.Pipeline{
+				result,err := activityStreamCollection.Aggregate(ctx, mongo.Pipeline{
 					matchStage, groupStage, projectStage})
 				defer cancel()
 				if err!=nil{
 					c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while listing user items"})
 				}
-				var allfilters []bson.M
-				if err = result.All(ctx, &allfilters); err!=nil{
+				var allactivities []bson.M
+				if err = result.All(ctx, &allactivities); err!=nil{
 					log.Fatal(err)
 				}
-				c.JSON(http.StatusOK, allfilters[0])
+				c.JSON(http.StatusOK, allactivities[0])
 	}
 }
 
-//edit a filterstream by requesterowner and admin
-func EditFilterStream()gin.HandlerFunc{
+//edit a activityStream by requesterowner and admin
+func EditActivityStream()gin.HandlerFunc{
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
 		uid := c.GetString("uid")
 
-		var filterStream models.FilterStream
+		var activityStream models.ActivityStream
 		if UserRole == "WORKER"{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
 		}
-		filterStreamId := c.Param("filter_stream_id")
+		activityStreamId := c.Param("activity_stream_id")
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
-		err := filterStreamCollection.FindOne(ctx, bson.M{"filter_stream_id":filterStreamId}).Decode(&filterStream)
+		err := activityStreamCollection.FindOne(ctx, bson.M{"activity_stream_id":activityStreamId}).Decode(&activityStream)
 		defer cancel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -465,7 +486,7 @@ func EditFilterStream()gin.HandlerFunc{
 		var stream models.Stream
 
 		if UserRole == "REQUESTER"{
-			err := streamCollection.FindOne(ctx, bson.M{"stream_id":filterStream.Stream_id}).Decode(&stream)
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":activityStream.Stream_id}).Decode(&stream)
 			defer cancel()
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -478,24 +499,24 @@ func EditFilterStream()gin.HandlerFunc{
 
 			
 		}
-		if err := c.BindJSON(&filterStream); err != nil {
+		if err := c.BindJSON(&activityStream); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 		//update updated_at --------------------------
-		filterStream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		validationErr := validate1.Struct(filterStream)
+		activityStream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		validationErr := validate1.Struct(activityStream)
 		if validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
 			return
 		}
 		//costum validation 
-		if filterStream.Stream_id != stream.Stream_id || filterStreamId != filterStream.Filter_stream_id{
-			c.JSON(http.StatusBadRequest, gin.H{"error":"editing StreamId and filterStreamId is not possible"})
+		if activityStream.Stream_id != stream.Stream_id || activityStreamId != activityStream.Activity_stream_id{
+			c.JSON(http.StatusBadRequest, gin.H{"error":"editing StreamId and activityStreamId is not possible"})
 			return
 		} 
 		var action models.Action
-		err = actionCollection.FindOne(ctx, bson.M{"action_id":filterStream.Action_id}).Decode(&action)
+		err = actionCollection.FindOne(ctx, bson.M{"action_id":activityStream.Action_id}).Decode(&action)
 		defer cancel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "action not found"})
@@ -504,15 +525,15 @@ func EditFilterStream()gin.HandlerFunc{
 		// ---------------------------------------
 
 		upsert := true
-		filter := bson.M{"filter_stream_id":filterStreamId}
+		filter := bson.M{"activity_stream_id":activityStreamId}
 		opt := options.UpdateOptions{
 			Upsert: &upsert,
 		}
-		_, err = filterStreamCollection.UpdateOne(
+		_, err = activityStreamCollection.UpdateOne(
 			ctx,
 			filter,
 			bson.D{
-				{"$set", filterStream},
+				{"$set", activityStream},
 			},
 			&opt,
 		)
@@ -521,27 +542,27 @@ func EditFilterStream()gin.HandlerFunc{
 		if err!=nil{
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		}
-		c.JSON(http.StatusOK, filterStream)
+		c.JSON(http.StatusOK, activityStream)
 
 
 	}
 }
 
-//delete a filterStream by requesterowner and admin
-func DeleteFilterStream()gin.HandlerFunc{
+//delete a activityStream by requesterowner and admin
+func DeleteActivityStream()gin.HandlerFunc{
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
 		uid := c.GetString("uid")
 
-		var filterStream models.FilterStream
+		var activityStream models.ActivityStream
 		if UserRole == "WORKER"{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
 		}
-		filterStreamId := c.Param("filter_stream_id")
+		activityStreamId := c.Param("activity_stream_id")
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
-		err := filterStreamCollection.FindOne(ctx, bson.M{"filter_stream_id":filterStreamId}).Decode(&filterStream)
+		err := activityStreamCollection.FindOne(ctx, bson.M{"activity_stream_id":activityStreamId}).Decode(&activityStream)
 		defer cancel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -550,7 +571,7 @@ func DeleteFilterStream()gin.HandlerFunc{
 		var stream models.Stream
 
 		if UserRole == "REQUESTER"{
-			err := streamCollection.FindOne(ctx, bson.M{"stream_id":filterStream.Stream_id}).Decode(&stream)
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":activityStream.Stream_id}).Decode(&stream)
 			defer cancel()
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -561,13 +582,13 @@ func DeleteFilterStream()gin.HandlerFunc{
 				return
 			}	
 		}
-		_, err = filterStreamCollection.DeleteOne(ctx, bson.M{"filter_stream_id":filterStreamId})
+		_, err = activityStreamCollection.DeleteOne(ctx, bson.M{"activity_stream_id":activityStreamId})
 		defer cancel()
 		if err != nil {
 			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting filter"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting activity"})
 		}
-		c.JSON(http.StatusOK,gin.H{"message":"filter deleted successfully"} )
+		c.JSON(http.StatusOK,gin.H{"message":"activity deleted successfully"} )
 
 
 	}

@@ -104,7 +104,6 @@ func CtreateTask()gin.HandlerFunc{
 
 //get a task just for requesterowner and admin
 func GetTask()gin.HandlerFunc{
-
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
 		uid := c.GetString("uid")
@@ -117,7 +116,7 @@ func GetTask()gin.HandlerFunc{
 			return
 		}else if UserRole == "REQUESTER" {
 			//check task existence
-			err := taskCollection.FindOne(ctx, bson.M{"task_id":taskId}).Decode(&task)
+			err := taskCollection.FindOne(ctx, bson.M{"task_id":taskId,"state":"ALIVE"}).Decode(&task)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -157,7 +156,17 @@ func GetTasks()gin.HandlerFunc{
 			matchStage = bson.D{{"$match",bson.M{}}}
 
 		}else if UserRole == "REQUESTER" {
-			matchStage = bson.D{{"$match",bson.M{"requester_id":uid}}}
+			// matchStage = bson.D{{"$match",bson.M{"requester_id":uid}}}
+			matchStage = bson.D{
+				{"$match",bson.D{
+					{"$and",
+						bson.A{
+							bson.D{{"state", "ALIVE"}},
+							bson.D{{"requester_id", uid}},
+						}},
+				},
+				},
+			}
 		}else if UserRole == "WORKER" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
@@ -202,7 +211,6 @@ func GetTasks()gin.HandlerFunc{
 //get all GetCustomizedTasks for worker
 func GetCustomizedTasks()gin.HandlerFunc{
 	return func(c *gin.Context){
-
 		uid := c.GetString("uid")
 		var user models.User
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -232,6 +240,7 @@ func GetCustomizedTasks()gin.HandlerFunc{
 			{"$match",bson.D{
 				{"$or",
 					bson.A{
+						// bson.D{{"filter.state", "ALIVE"}},
 						bson.D{{"filter.tags", user.Location}},
 						bson.D{{"filter", bson.D{
 							{"$size", 0},}}},
@@ -239,6 +248,8 @@ func GetCustomizedTasks()gin.HandlerFunc{
 			},
 			},
 		}
+		matchStage3 := bson.D{{"$match",bson.M{"state":"ALIVE"}}}
+
 		  
 		recordPerPage, err := strconv.Atoi(c.Query("recordPerPage"))
 		if err != nil || recordPerPage <1{
@@ -260,7 +271,7 @@ func GetCustomizedTasks()gin.HandlerFunc{
 				{"user_items", bson.D{{"$slice", []interface{}{"$data", startIndex, recordPerPage}}}},
 			}}}
 		result,err := taskCollection.Aggregate(ctx, mongo.Pipeline{
-			matchStage,matchStage2, groupStage, projectStage})
+			matchStage,matchStage2,matchStage3, groupStage, projectStage})
 
 		defer cancel()
 		if err!=nil{
@@ -348,6 +359,8 @@ func DeleteTask()gin.HandlerFunc{
 		uid := c.GetString("uid")
 
 		var task models.Task
+		var deletedFilterTask models.DeletedTask
+
 		if UserRole == "WORKER"{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
@@ -366,16 +379,59 @@ func DeleteTask()gin.HandlerFunc{
 				return
 			}	
 		}
-
-		_, err = taskCollection.DeleteOne(ctx, bson.M{"task_id":taskId})
-		_, err = filterTaskCollection.DeleteOne(ctx, bson.M{"task_id":taskId})//might cause BUG
-
-		defer cancel()
-		if err != nil {
-			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting task"})
+		//change task state to deleted
+		task.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		task.State = "DELETED"
+		upsert := true
+		filter := bson.M{"task_id": taskId}
+		opt := options.UpdateOptions{
+			Upsert: &upsert,
 		}
-		c.JSON(http.StatusOK,gin.H{"message":"task deleted successfully"} )
+		_, err = taskCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", task},
+			},
+			&opt,
+		)
+		defer cancel()
+		
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		//change filtertask state to deleted
+		deletedFilterTask.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		deletedFilterTask.State = "DELETED"
+		upsert = true
+		filter = bson.M{"task_id": taskId}
+		opt = options.UpdateOptions{
+			Upsert: &upsert,
+		}
+		_, err = filterTaskCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", deletedFilterTask},
+			},
+			&opt,
+		)
+		defer cancel()
+		
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		// _, err = taskCollection.DeleteOne(ctx, bson.M{"task_id":taskId})
+		// _, err = filterTaskCollection.DeleteOne(ctx, bson.M{"task_id":taskId})//might cause BUG
+
+		// defer cancel()
+		// if err != nil {
+		// 	log.Panic(err)
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting task"})
+		// }
+		c.JSON(http.StatusOK,gin.H{"message":"task deleted successfully"})
 	}
 }
 
@@ -396,6 +452,7 @@ func CreateFilterTask()gin.HandlerFunc{
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		filterTask.State = "ALIVE"
 		validationErr := validate1.Struct(filterTask)
 		if validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
@@ -417,7 +474,7 @@ func CreateFilterTask()gin.HandlerFunc{
 			}
 
 			//filterTask existence in DB-----------------------
-			filterTaskCount, err := filterTaskCollection.CountDocuments(ctx, bson.M{"task_id":filterTask.Task_id})
+			filterTaskCount, err := filterTaskCollection.CountDocuments(ctx, bson.M{"task_id":filterTask.Task_id,"state":"ALIVE"})
 			defer cancel()
 			if err != nil {
 				log.Panic(err)
@@ -457,19 +514,20 @@ func GetFilterTaskByID()gin.HandlerFunc{
 		var filterTask models.FilterTask
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		//check filterTask existence
-		err := filterTaskCollection.FindOne(ctx, bson.M{"filter_task_id":filterTaskId}).Decode(&filterTask)
-		defer cancel()
-		if err != nil{
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+
 		if UserRole == "WORKER" {
 			c.JSON(http.StatusBadRequest, gin.H{"error" : "Unauthorized to access this resource"})
 			return
 		}else if UserRole == "REQUESTER" {
+			err := filterTaskCollection.FindOne(ctx, bson.M{"filter_task_id":filterTaskId,"state":"ALIVE"}).Decode(&filterTask)
+			defer cancel()
+			if err != nil{
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 			//check filterTask and task belonging to owner
 			var task models.Task
-			err := taskCollection.FindOne(ctx, bson.M{"task_id":filterTask.Task_id}).Decode(&task)
+			err = taskCollection.FindOne(ctx, bson.M{"task_id":filterTask.Task_id}).Decode(&task)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -483,8 +541,13 @@ func GetFilterTaskByID()gin.HandlerFunc{
 				return
 			}
 		}else if UserRole == "ADMIN"{
+			err := filterTaskCollection.FindOne(ctx, bson.M{"filter_task_id":filterTaskId}).Decode(&filterTask)
+			defer cancel()
+			if err != nil{
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 			c.JSON(http.StatusOK, filterTask)
-
 		}
 		
 	}
@@ -498,20 +561,21 @@ func GetFilterTaskByTaskID()gin.HandlerFunc{
 		taskId := c.Param("task_id")
 		var filterTask models.FilterTask
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		//check filterTask existence
-		err := filterTaskCollection.FindOne(ctx, bson.M{"task_id":taskId}).Decode(&filterTask)
-		defer cancel()
-		if err != nil{
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+
 		if UserRole == "WORKER" {
 			c.JSON(http.StatusBadRequest, gin.H{"error" : "Unauthorized to access this resource"})
 			return
 		}else if UserRole == "REQUESTER" {
+			//check filterTask existence
+			err := filterTaskCollection.FindOne(ctx, bson.M{"task_id":taskId,"state":"ALIVE"}).Decode(&filterTask)
+			defer cancel()
+			if err != nil{
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 			//check filterTask and task belonging to owner
 			var task models.Task
-			err := taskCollection.FindOne(ctx, bson.M{"task_id":filterTask.Task_id}).Decode(&task)
+			err = taskCollection.FindOne(ctx, bson.M{"task_id":filterTask.Task_id}).Decode(&task)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -525,6 +589,13 @@ func GetFilterTaskByTaskID()gin.HandlerFunc{
 				return
 			}
 		}else if UserRole == "ADMIN"{
+			//check filterTask existence
+			err := filterTaskCollection.FindOne(ctx, bson.M{"task_id":taskId}).Decode(&filterTask)
+			defer cancel()
+			if err != nil{
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 			c.JSON(http.StatusOK, filterTask)
 
 		}
@@ -643,11 +714,34 @@ func DeleteFilterTask()gin.HandlerFunc{
 				return
 			}	
 		}
-		_, err = filterTaskCollection.DeleteOne(ctx, bson.M{"filter_task_id":filterTaskId})
+		// _, err = filterTaskCollection.DeleteOne(ctx, bson.M{"filter_task_id":filterTaskId})
+		// defer cancel()
+		// if err != nil {
+		// 	log.Panic(err)
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting filter"})
+		// }
+		var deletedFilterTask models.DeletedTask
+
+		deletedFilterTask.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		deletedFilterTask.State = "DELETED"
+		upsert := true
+		filter := bson.M{"filter_task_id": filterTaskId}
+		opt := options.UpdateOptions{
+			Upsert: &upsert,
+		}
+		_, err = filterTaskCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", deletedFilterTask},
+			},
+			&opt,
+		)
 		defer cancel()
-		if err != nil {
-			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting filter"})
+		
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 		c.JSON(http.StatusOK,gin.H{"message":"filter deleted successfully"} )
 
@@ -684,14 +778,15 @@ func ApplyTask()gin.HandlerFunc{
 		workerTask.Worker_task_id = workerTask.ID.Hex()
 		workerTask.Worker_id = uid
 		workerTask.Task_id = taskId
+		workerTask.State = "ALIVE"
 
 
 		if *task.Approve_on_demand == true{
-			workerTask.Last_status = "WAITING"
-			taskStatus.Status = "WAITING"
+			workerTask.Last_status = "PENDING"
+			taskStatus.Status = "PENDING"
 		}else{
-			workerTask.Last_status = "DOING"
-			taskStatus.Status = "DOING"
+			workerTask.Last_status = "RUNING"
+			taskStatus.Status = "RUNING"
 		}
 		taskStatus.Worker_task_id = workerTask.Worker_task_id
 		taskStatus.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
@@ -721,7 +816,7 @@ func ApplyTask()gin.HandlerFunc{
 	}
 }
 
-//choose between doing and waiting ---> BUG : when there is nothing it panic
+//choose between RUNING and PENDING ---> BUG : when there is nothing it panic
 func GetWorkerTasks()gin.HandlerFunc{
 	return func(c *gin.Context){
 		UserRole := c.GetString("User_role")
@@ -765,7 +860,7 @@ func GetWorkerTasks()gin.HandlerFunc{
 				}},
 
 			}
-			if last_status == "DOING" || last_status == "WAITING" {
+			if last_status == "RUNING" || last_status == "PENDING" {
 				matchStage2 = bson.D{
 					{"$match",bson.D{
 						{"$and",
@@ -805,7 +900,7 @@ func GetWorkerTasks()gin.HandlerFunc{
 			}
 			c.JSON(http.StatusOK, allusers[0])
 		}else if UserRole == "WORKER" {
-			if last_status == "DOING" || last_status == "WAITING" {
+			if last_status == "RUNING" || last_status == "PENDING" {
 				matchStage = bson.D{
 					{"$match",bson.D{
 						{"$and",

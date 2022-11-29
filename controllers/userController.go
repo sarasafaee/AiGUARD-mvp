@@ -12,7 +12,7 @@ import(
 helper "github.com/sarasafaee/AiGUARD-mvp/helpers"
 "github.com/sarasafaee/AiGUARD-mvp/models"
 "github.com/sarasafaee/AiGUARD-mvp/database"
-"golang.org/x/crypto/bcrypt"
+// "golang.org/x/crypto/bcrypt"
 
 "go.mongodb.org/mongo-driver/bson"
 "go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,25 +25,25 @@ var blacklistTokenCollection *mongo.Collection = database.OpenCollection(databas
 
 var validate = validator.New()
 
-func HashPassword(password string) string{
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	if err!=nil{
-		log.Panic(err)
-	}
-	return string(bytes)
-}
+// func HashPassword(password string) string{
+// 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+// 	if err!=nil{
+// 		log.Panic(err)
+// 	}
+// 	return string(bytes)
+// }
 
-func VerifyPassword(userPassword string, providedPassword string)(bool, string){
-	err := bcrypt.CompareHashAndPassword([]byte(providedPassword), []byte(userPassword))
-	check := true
-	msg := ""
+// func VerifyPassword(userPassword string, providedPassword string)(bool, string){
+// 	err := bcrypt.CompareHashAndPassword([]byte(providedPassword), []byte(userPassword))
+// 	check := true
+// 	msg := ""
 
-	if err!= nil {
-		msg = fmt.Sprintf("email or password is incorrect")
-		check=false
-	}
-	return check, msg
-}
+// 	if err!= nil {
+// 		msg = fmt.Sprintf("email or password is incorrect")
+// 		check=false
+// 	}
+// 	return check, msg
+// }
 
 func Signup()gin.HandlerFunc{
 
@@ -61,17 +61,17 @@ func Signup()gin.HandlerFunc{
 			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
 			return
 		} else {
-			emailCount, err := userCollection.CountDocuments(ctx, bson.M{"email":user.Email})
+			emailCount, err := userCollection.CountDocuments(ctx, bson.M{"email":user.Email,"state":"ALIVE"})
 			defer cancel()
 			if err != nil {
 				log.Panic(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while checking for the email"})
 			}
 	
-			password := HashPassword(*user.Password)
-			user.Password = &password
+			// password := HashPassword(*user.Password)
+			// user.Password = &password
 	
-			phoneCount, err := userCollection.CountDocuments(ctx, bson.M{"phone":user.Phone})
+			phoneCount, err := userCollection.CountDocuments(ctx, bson.M{"phone":user.Phone,"state":"ALIVE"})
 			defer cancel()
 			if err!= nil {
 				log.Panic(err)
@@ -90,6 +90,7 @@ func Signup()gin.HandlerFunc{
 				token, refreshToken, _ := helper.GenerateAllTokens(*user.Email, *user.First_name, *user.Last_name, *user.User_role, *&user.User_id)
 				user.Token = &token
 				user.Refresh_token = &refreshToken
+				user.State = "ALIVE"
 		
 				resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
 				if insertErr !=nil {
@@ -122,19 +123,23 @@ func Login() gin.HandlerFunc{
 		if user.Password == nil || user.Email == nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error":"email and password are required"})
 		}else{
-			err := userCollection.FindOne(ctx, bson.M{"email":user.Email}).Decode(&foundUser)
+			err := userCollection.FindOne(ctx, bson.M{"email":user.Email,"state":"ALIVE"}).Decode(&foundUser)
 			defer cancel()
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error":"email or password is incorrect"})
 				return
 			}
 	
-			passwordIsValid, msg := VerifyPassword(*user.Password, *foundUser.Password)
-			defer cancel()
-			if passwordIsValid != true{
-				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			// passwordIsValid, msg := VerifyPassword(*user.Password, *foundUser.Password)
+			if *user.Password != *foundUser.Password {
+				c.JSON(http.StatusInternalServerError, gin.H{"error":"email or password is incorrect"})
 				return
 			}
+			defer cancel()
+			// if passwordIsValid != true{
+			// 	c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			// 	return
+			// }
 	
 			if foundUser.Email == nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error":"user not found"})
@@ -289,7 +294,8 @@ func EditUser() gin.HandlerFunc{
 		}
 
 		if *changedUser.Password != *originalUser.Password {
-			password := HashPassword(*changedUser.Password)
+			// password := HashPassword(*changedUser.Password)
+			password := *changedUser.Password
 			changedUser.Password = &password
 		} 
 
@@ -330,21 +336,43 @@ func EditUser() gin.HandlerFunc{
 func DeactivateUser() gin.HandlerFunc{
 	return func(c *gin.Context){
 		token := c.GetHeader("token")
-
-		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"status": http.StatusUnauthorized, "message": "Authorization Token is required"})
-			c.Abort()
-			return
-		}
-
 		uid := c.GetString("uid")
 
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		deleteResult, err := userCollection.DeleteOne(ctx, bson.M{"user_id":uid})
+		// deleteResult, err := userCollection.DeleteOne(ctx, bson.M{"user_id":uid})
+		// defer cancel()
+		// if err != nil {
+		// 	log.Panic(err)
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting user"})
+		// }
+		var changedUser models.User
+		err := userCollection.FindOne(ctx, bson.M{"user_id":uid}).Decode(&changedUser)
 		defer cancel()
 		if err != nil {
-			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting user"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		changedUser.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		changedUser.State = "DELETED"
+		upsert := true
+		filter := bson.M{"user_id": uid}
+		opt := options.UpdateOptions{
+			Upsert: &upsert,
+		}
+	
+		_, err = userCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", changedUser},
+			},
+			&opt,
+		)
+		defer cancel()
+		
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 
 		var blacklistToken models.BlacklistToken
@@ -358,8 +386,7 @@ func DeactivateUser() gin.HandlerFunc{
 		}
 		defer cancel()
 
-
-		c.JSON(http.StatusOK, deleteResult)
+		c.JSON(http.StatusOK, gin.H{"message":uid})
 	}
 }
 
