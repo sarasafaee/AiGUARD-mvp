@@ -11,7 +11,7 @@ type Stream struct{
 	Requester_id		string					`json:"requester_id"`
 	Created_at			time.Time				`json:"created_at"`
 	Updated_at			time.Time				`json:"updated_at"`
-	Token				*string					`json:"token  validate:"required"`
+	Token				*string					`json:"token"  validate:"required"`
 	Available_at		time.Time				`json:"available_at"` //search about time period type and ...
 	Stream_id			string					`json:"stream_id"`
 	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
@@ -28,4 +28,9 @@ type ActivityStream struct{
 	Action_id 			string 					`json:"action_id" validate:"required"`
 	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
 
+}
+
+type DeletedStream struct{
+	Updated_at			time.Time				`json:"updated_at"`
+	State 				string					`json:"state" validate:"required,eq=ALIVE|eq=DELETED"`
 }

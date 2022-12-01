@@ -3,19 +3,20 @@ package main
 import(
 	routes "github.com/sarasafaee/AiGUARD-mvp/routes"
 	"os"
+	"github.com/sarasafaee/AiGUARD-mvp/middleware"
 	"log"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"path/filepath"
+	// "path/filepath"
 )
 
 func main(){
-        dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-        if err != nil {
-            log.Fatal(err)
-        }
-        environmentPath := filepath.Join(dir, ".env")
-        err = godotenv.Load(environmentPath)	
+        // dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+        // if err != nil {
+        //     log.Fatal(err)
+        // }
+        // environmentPath := filepath.Join(dir, ".env")
+        err := godotenv.Load()	
 	
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -28,6 +29,7 @@ func main(){
 
 	router := gin.New()
 	router.Use(gin.Logger())
+	router.Use(middleware.CORSMiddleware())
 
 	routes.AuthRoutes(router)
 	routes.UserRoutes(router)

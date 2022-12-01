@@ -9,16 +9,16 @@ import(
 "github.com/joho/godotenv"
 "go.mongodb.org/mongo-driver/mongo"
 "go.mongodb.org/mongo-driver/mongo/options"
-"path/filepath"
+// "path/filepath"
 )
 
 func DBinstance() *mongo.Client{
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-        if err != nil {
-            log.Fatal(err)
-        }
-        environmentPath := filepath.Join(dir, ".env")
-        err = godotenv.Load(environmentPath)
+	// dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+    //     if err != nil {
+    //         log.Fatal(err)
+    //     }
+    //     environmentPath := filepath.Join(dir, ".env")
+        err := godotenv.Load()
 	if err!=nil{
 		log.Fatal("Error loading .env file")
 	}

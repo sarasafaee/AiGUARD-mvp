@@ -45,6 +45,7 @@ func CtreateTask()gin.HandlerFunc{
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		task.State = "ALIVE"
 		//custom validation----------
 		today, _  := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		if today.Before(task.Deadline) == false {

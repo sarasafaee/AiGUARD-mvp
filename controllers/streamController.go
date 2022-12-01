@@ -257,6 +257,7 @@ func DeleteStream()gin.HandlerFunc{
 		uid := c.GetString("uid")
 
 		var stream models.Stream
+		var activityStream models.DeletedStream
 		if UserRole == "WORKER"{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
@@ -275,17 +276,104 @@ func DeleteStream()gin.HandlerFunc{
 				return
 			}	
 		}
-
-		_, err = streamCollection.DeleteOne(ctx, bson.M{"stream_id":streamId})
-		var task models.Task
-		_ = taskCollection.FindOne(ctx, bson.M{"stream_id":streamId}).Decode(&task)//might cause BUG
-		_, err = taskCollection.DeleteOne(ctx, bson.M{"stream_id":streamId})//might cause BUG
-		_, err = filterTaskCollection.DeleteOne(ctx, bson.M{"task_id":task.Task_id})//might cause BUG
-
+		//change stream state to deleted
+		stream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		stream.State = "DELETED"
+		upsert := true
+		filter := bson.M{"stream_id": streamId}
+		opt := options.UpdateOptions{
+			Upsert: &upsert,
+		}
+		_, err = streamCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", stream},
+			},
+			&opt,
+		)
 		defer cancel()
-		if err != nil {
-			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting task"})
+
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error1": err.Error()})
+			return
+		}
+		//find task 
+		var task models.Task
+		err = taskCollection.FindOne(ctx, bson.M{"stream_id":streamId}).Decode(&task)//might cause BUG
+		defer cancel()
+		if err == nil {
+			//change task state to deleted
+			task.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			task.State = "DELETED"
+			upsert = true
+			filter = bson.M{"task_id": task.Task_id}
+			opt = options.UpdateOptions{
+				Upsert: &upsert,
+			}
+			_, err = taskCollection.UpdateOne(
+				ctx,
+				filter,
+				bson.D{
+					{"$set", task},
+				},
+				&opt,
+			)
+			defer cancel()
+
+			if err!=nil{
+				c.JSON(http.StatusBadRequest, gin.H{"error3": err.Error()})
+				return
+			}
+		}
+		err1 := filterTaskCollection.FindOne(ctx, bson.M{"task_id":task.Task_id}).Decode(&task)//might cause BUG
+		defer cancel()
+		if err1 == nil {
+			//change filterTask state to deleted
+			activityStream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			activityStream.State = "DELETED"
+			upsert = true
+			filter = bson.M{"task_id": task.Task_id}
+			opt = options.UpdateOptions{
+				Upsert: &upsert,
+			}
+			_, err = filterTaskCollection.UpdateOne(
+				ctx,
+				filter,
+				bson.D{
+					{"$set", activityStream},
+				},
+				&opt,
+			)
+			defer cancel()
+
+			if err!=nil{
+				c.JSON(http.StatusBadRequest, gin.H{"error2": err.Error()})
+				return
+			}
+		}
+		//check if activityStream exists ???
+		////////////
+		//change activityStream state
+		upsert = true
+		filter = bson.M{"stream_id":streamId}
+		opt = options.UpdateOptions{
+			Upsert: &upsert,
+		}
+		_, err = activityStreamCollection.UpdateMany(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", bson.D{
+					{"state", "DELETED"},
+				}}},
+			&opt,
+		)
+	
+		defer cancel()
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
 		c.JSON(http.StatusOK,gin.H{"message":"stream deleted successfully"} )
 	}
@@ -308,6 +396,7 @@ func CreateActivityStream()gin.HandlerFunc{
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		activityStream.State = "ALIVE"
 		validationErr := validate2.Struct(activityStream)
 		if validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
@@ -363,7 +452,7 @@ func GetActivityStreamByID()gin.HandlerFunc{
 		var activityStream models.ActivityStream
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		//check activityStream existence
-		err := activityStreamCollection.FindOne(ctx, bson.M{"activity_stream_id":activityStreamId}).Decode(&activityStream)
+		err := activityStreamCollection.FindOne(ctx, bson.M{"activity_stream_id":activityStreamId,"state":"ALIVE"}).Decode(&activityStream)
 		defer cancel()
 		if err != nil{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -375,7 +464,7 @@ func GetActivityStreamByID()gin.HandlerFunc{
 		}else if UserRole == "REQUESTER" {
 			//check activityStream and task belonging to owner
 			var stream models.Stream
-			err := streamCollection.FindOne(ctx, bson.M{"stream_id":activityStream.Stream_id}).Decode(&stream)
+			err := streamCollection.FindOne(ctx, bson.M{"stream_id":activityStream.Stream_id,"state":"ALIVE"}).Decode(&stream)
 			defer cancel()
 			if err != nil{
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -421,7 +510,17 @@ func GetActivityStreamsByStreamID()gin.HandlerFunc{
 				c.JSON(http.StatusInternalServerError,  gin.H{"error": " no documents in result"})
 				return
 			}
-			matchStage = bson.D{{"$match",bson.M{"stream_id":streamId}}}
+			// matchStage = bson.D{{"$match",bson.M{"stream_id":streamId}}}
+			matchStage = bson.D{
+				{"$match",bson.D{
+					{"$and",
+						bson.A{
+							bson.D{{"state", "ALIVE"}},
+							bson.D{{"stream_id", streamId}},
+						}},
+				},
+				},
+			}
 		}else if UserRole == "WORKER" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
@@ -582,12 +681,39 @@ func DeleteActivityStream()gin.HandlerFunc{
 				return
 			}	
 		}
-		_, err = activityStreamCollection.DeleteOne(ctx, bson.M{"activity_stream_id":activityStreamId})
+		//check activitytream existence
+		err = activityStreamCollection.FindOne(ctx, bson.M{"activity_stream_id":activityStreamId}).Decode(&activityStream)
 		defer cancel()
-		if err != nil {
-			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting activity"})
+		if err == nil {
+			//change stream state to deleted
+			activityStream.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			activityStream.State = "DELETED"
+			upsert := true
+			filter := bson.M{"activity_stream_id":activityStreamId}
+			opt := options.UpdateOptions{
+				Upsert: &upsert,
+			}
+			_, err = activityStreamCollection.UpdateOne(
+				ctx,
+				filter,
+				bson.D{
+					{"$set", activityStream},
+				},
+				&opt,
+			)
+			defer cancel()
+
+			if err!=nil{
+				c.JSON(http.StatusBadRequest, gin.H{"error1": err.Error()})
+				return
+			}
 		}
+		// _, err = activityStreamCollection.DeleteOne(ctx, bson.M{"activity_stream_id":activityStreamId})
+		// defer cancel()
+		// if err != nil {
+		// 	log.Panic(err)
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while deleting activity"})
+		// }
 		c.JSON(http.StatusOK,gin.H{"message":"activity deleted successfully"} )
 
 
