@@ -20,6 +20,7 @@ helper "github.com/sarasafaee/AiGUARD-mvp/helpers"
 )
 
 var notificationCollection *mongo.Collection = database.OpenCollection(database.Client, "notification")
+var notificationTokenCollection *mongo.Collection = database.OpenCollection(database.Client, "notificationToken")
 
 
 
@@ -27,25 +28,34 @@ var notificationCollection *mongo.Collection = database.OpenCollection(database.
 func SendNotification()gin.HandlerFunc{
 	return func(c *gin.Context){
 		uid := c.GetString("uid")
-		//check access---------------
-		if err := helper.CheckUserRole(c, "REQUESTER"); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		notification_token_id := c.GetString("notification_token_id")
+		var notificationToken models.NotificationToken
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+		err := notificationTokenCollection.FindOne(ctx, bson.M{"notificationtoken_id":notification_token_id}).Decode(&notificationToken)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
 			return
 		}
+		//check access---------------
+		// if err = helper.CheckUserRole(c, "REQUESTER"); err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"error2":err.Error()})
+		// 	return
+		// }
 		//----------------------------
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var notification models.Notification
 
 		if err := c.BindJSON(&notification); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error3": err.Error()})
 			return
 		}
 
 		var workerTask models.WorkerTask
-		err := workerTaskCollection.FindOne(ctx, bson.M{"worker_task_id":notification.Worker_task_id}).Decode(&workerTask)
+		err = workerTaskCollection.FindOne(ctx, bson.M{"worker_task_id":notification.Worker_task_id}).Decode(&workerTask)
 		defer cancel()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error4": err.Error()})
 			return
 		}
 		if workerTask.Last_status != "RUNING"{
@@ -56,7 +66,7 @@ func SendNotification()gin.HandlerFunc{
 		err = taskCollection.FindOne(ctx, bson.M{"task_id":workerTask.Task_id}).Decode(&task)
 		defer cancel()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error5": err.Error()})
 			return
 		}
 		if uid != task.Requester_id {
@@ -70,7 +80,7 @@ func SendNotification()gin.HandlerFunc{
 		notification.Last_status = "SENT"
 		validationErr := validate2.Struct(notification)
 		if validationErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error6":validationErr.Error()})
 			return
 		}
 		//Insert notification into DB---------------------------------
@@ -165,27 +175,134 @@ func GetNotifications()gin.HandlerFunc{
 					log.Fatal(err)
 				}
 				c.JSON(http.StatusOK, allnotifs[0])
-				//change notifs'last status
-				upsert := true
-				filter := bson.M{"last_status":"SENT"}
-				opt := options.UpdateOptions{
-					Upsert: &upsert,
-				}
-				_, err = notificationCollection.UpdateMany(
-					ctx,
-					filter,
-					bson.D{
-						{"$set", bson.D{
-							{"last_status", "SEEN"},
-						}}},
-					&opt,
-				)
+
+				// //change notifs'last status
+
+				// upsert := true
+				// filter := bson.M{"last_status":"SENT"}
+				// opt := options.UpdateOptions{
+				// 	Upsert: &upsert,
+				// }
+				// _, err = notificationCollection.UpdateMany(
+				// 	ctx,
+				// 	filter,
+				// 	bson.D{
+				// 		{"$set", bson.D{
+				// 			{"last_status", "SEEN"},
+				// 		}}},
+				// 	&opt,
+				// )
 			
-				defer cancel()
-				if err!=nil{
-					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-					return
-				}
+				// defer cancel()
+				// if err!=nil{
+				// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				// 	return
+				// }
+	}
+}
+
+//change notif's status
+func NotificationApproval()gin.HandlerFunc{
+	return func(c *gin.Context){
+		UserRole := c.GetString("User_role")
+		if UserRole == "REQUESTER"{
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unauthorized to access this resource"})
+			return
+		}
+		notificationId := c.Param("notification_id")
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+		upsert := true
+		filter := bson.M{"notification_id":notificationId}
+		opt := options.UpdateOptions{
+			Upsert: &upsert,
+		}
+		_, err := notificationCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", bson.D{
+					{"last_status", "SEEN"},
+				}}},
+			&opt,
+		)
+	
+		defer cancel()
+		if err!=nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message":"successful"})
+
+	}
+}
+
+//create a token to send notif by giving streamID
+func CreateNotificationToken()gin.HandlerFunc{
+	return func(c *gin.Context){
+		uid := c.GetString("uid")
+		
+		var notificationToken models.NotificationToken
+
+		if err := c.BindJSON(&notificationToken); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var task models.Task
+		err := taskCollection.FindOne(ctx, bson.M{"stream_id":notificationToken.Stream_id,"requester_id":uid}).Decode(&task)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"stream not found"})
+			return
+		}
+
+		notificationToken.Task_id = task.Task_id
+		notificationToken.ID = primitive.NewObjectID()
+		notificationToken.NotificationToken_id = notificationToken.ID.Hex()
+		token, _ := helper.GenerateNotificationToken(notificationToken.Stream_id, notificationToken.Task_id,notificationToken.NotificationToken_id ,uid)
+		notificationToken.Token = &token
+
+		err = notificationTokenCollection.FindOne(ctx, bson.M{"stream_id":notificationToken.Stream_id}).Decode(&notificationToken)
+		defer cancel()
+		if err != nil {
+			_, insertErr := notificationTokenCollection.InsertOne(ctx, notificationToken)
+			if insertErr !=nil {
+				msg := fmt.Sprintf("notificationToken item was not created")
+				c.JSON(http.StatusInternalServerError, gin.H{"error":msg})
+				return
+			}
+			defer cancel()
+			c.JSON(http.StatusOK,notificationToken)
+		}else{
+			//update
+
+			upsert := true
+			filter := bson.M{"stream_id":notificationToken.Stream_id}
+			opt := options.UpdateOptions{
+				Upsert: &upsert,
+			}
+			_, err = activityStreamCollection.UpdateOne(
+				ctx,
+				filter,
+				bson.D{
+					{"$set", notificationToken},
+				},
+				&opt,
+			)
+			defer cancel()
+
+			if err!=nil{
+				c.JSON(http.StatusBadRequest, gin.H{"error1": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusInternalServerError, notificationToken)
+
+		}
+
+
 	}
 }
 

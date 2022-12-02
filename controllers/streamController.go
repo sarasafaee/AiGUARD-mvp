@@ -22,8 +22,6 @@ helper "github.com/sarasafaee/AiGUARD-mvp/helpers"
 var streamCollection *mongo.Collection = database.OpenCollection(database.Client, "stream")
 var activityStreamCollection *mongo.Collection = database.OpenCollection(database.Client, "activityStream")
 
-
-
 var validate2 = validator.New()
 
 func CtreateStream()gin.HandlerFunc{

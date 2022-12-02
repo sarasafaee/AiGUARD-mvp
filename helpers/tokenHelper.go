@@ -24,6 +24,13 @@ type SignedDetails struct{
 	jwt.StandardClaims 
 }
 
+type notificationTokenSignedDetails struct{
+	StreamID 			string
+	TaskID 				string
+	NotificationTokenID 	string
+	Uid 					string
+	jwt.StandardClaims 
+}
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
 var blacklistTokenCollection *mongo.Collection = database.OpenCollection(database.Client, "blacklistToken")
@@ -99,6 +106,46 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string){
 	return claims, msg
 }
 
+func ValidateNotificationToken(signedToken string) (claims *notificationTokenSignedDetails, msg string){
+	// var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	// tokenCount, _ := blacklistTokenCollection.CountDocuments(ctx, bson.M{"token":signedToken})
+	// defer cancel()
+
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&notificationTokenSignedDetails{},
+		func(token *jwt.Token)(interface{}, error){
+			return []byte(SECRET_KEY), nil
+		},
+	)
+
+	if err != nil {
+		msg=err.Error()
+		return
+	}
+	claims, ok:= token.Claims.(*notificationTokenSignedDetails)
+
+	// if tokenCount >0{
+	// 	msg = fmt.Sprintf("you logedout before")
+	// }
+
+	if !ok{
+		msg = fmt.Sprintf("the token is invalid")
+		msg = err.Error()
+		return
+	}
+
+	if claims.ExpiresAt < time.Now().Local().Unix(){
+		msg = fmt.Sprintf("token is expired")
+		msg = err.Error()
+		return
+	}
+
+
+	return claims, msg
+}
+
 func UpdateAllTokens(signedToken string, signedRefreshToken string, userId string){
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
@@ -132,4 +179,25 @@ func UpdateAllTokens(signedToken string, signedRefreshToken string, userId strin
 		return
 	}
 	return
+}
+
+func GenerateNotificationToken(streamID string, taskID string, notificationTokenID string, uid string) (signedToken string, err error){
+	claims := &notificationTokenSignedDetails{
+		StreamID : streamID,
+		TaskID : taskID,
+		NotificationTokenID : notificationTokenID,
+		Uid : uid,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(72)).Unix(),
+		},
+	}
+
+	token ,err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
+
+	if err != nil {
+		log.Panic(err)
+		return 
+	}
+
+	return token, err
 }
